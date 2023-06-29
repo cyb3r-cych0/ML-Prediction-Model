@@ -33,7 +33,7 @@ x = data_frame[['AGE', 'GENDER', 'EDUCATION']]  # top 3 features
 y = data_frame[['PMT']]  # target output
 
 # split dataset into train and test
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=100)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=100)
 
 # create a logistic regression body
 logreg = LogisticRegression()
