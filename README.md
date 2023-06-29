@@ -1,3 +1,3 @@
 # PMT-ML-Model
-# Python Machine Learning Prototype
+# Protection Motivation Theory Prototype
 > can be used with both uploaded datasets
