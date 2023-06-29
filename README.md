@@ -1,3 +1,4 @@
 # PMT-ML-Model
-# Protection Motivation Theory Prototype
-> can be used with both uploaded datasets
+## Protection Motivation Theory Prototype
+### Click Link Below To Run Model
+> https://cyb3r-cych0.github.io/PMT-ML-Model/
