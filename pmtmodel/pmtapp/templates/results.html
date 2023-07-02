@@ -26,33 +26,63 @@
     <div class="container mt-5 mb-5 pb-5" style="width: 100%; font-size: 14px">
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
                 <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT MODEL PROTOTYPE RESULTS
-            </button>
-
-        <table border="2">
-            <tr>
-                <th>Linear Regression</th>
-            </tr>
-           <tr>
-               <td>{{ l_reg_results }}</td>
-           </tr>
-        </table>
-        <table border="2">
-            <tr>
-                <th>Random Forest</th>
-            </tr>
-            <tr>
-                <td>{{ r_frt_results }}</td>
-            </tr>
-        </table>
-        <table border="2">
-            <tr>
-                <th>Model Comparison</th>
-            </tr>
-            <tr>
-                <td>{{ data_frame_models }}</td>
-            </tr>
-        </table>
-    </div>
+        </button>
+        <h4>Linear Regression</h4>
+        <div class="col-8 m-2">
+            <p>[+] Train Data >> {{ X_train }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Test Data >> {{ Y_test }}</p>
+        </div>
+        <h5>Model Performance</h5>
+        <h6>1.Random Forest</h6>
+            <div class="col-8 m-2">
+                <p>[+] Train Mean Squared Error >> {{ r_frt_train_mse }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Train r2 Score >> {{ r_frt_train_r2 }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Test Mean Squared Error >> {{ r_frt_test_mse }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Test r2 Score >> {{ r_frt_test_r2 }}</p>
+            </div>
+        <h6>2.Linear Regression</h6>
+            <div class="col-8 m-2">
+                <p>[+] Train Mean Squared Error >> {{ l_reg_train_mse }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Train r2 Score >> {{ l_reg_train_r2 }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Test Mean Squared Error >> {{ l_reg_test_mse }}</p>
+            </div>
+            <div class="col-8 m-2">
+                <p>[+] Test r2 Score >> {{ l_reg_test_r2 }}</p>
+            </div>
+        <h4>Logistic Regression</h4>
+        <div class="col-8 m-2">
+            <p>[+] Train Data >> {{ x_test }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Predict Data >> {{ y_pred }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Accuracy >> {{ accuracy }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Recall >> {{ recall }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Precision >> {{ precision }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Report >> {{ report }}</p>
+        </div>
+        <div class="col-8 m-2">
+            <p>[+] Regression >> {{ disp }}</p>
+        </div>
     <div class="col-3 ml-5">
         <a href="{% url 'demographic_information' %}">
             <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-primary">Back</button>

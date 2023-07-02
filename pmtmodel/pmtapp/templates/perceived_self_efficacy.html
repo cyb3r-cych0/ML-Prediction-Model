@@ -4,7 +4,7 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Demographic Information</title>
+    <title>Perceived Self Efficacy</title>
     <meta charset="UTF-8">
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -25,6 +25,15 @@
 </head>
 <body>
     <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
+        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+            <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT MODEL PROTOTYPE
+        </button>
+        <h1>Cybersecurity User Behavior Prediction-Prototype</h1>
+        <p>This application predicts cybersecurity user behavior based on the PMT theory moderated by user demographics.</p>
+        <p>Please Indicate the extent to which you agree or disagree with the following statements concerning PERCEIVED SELF EFFICACY in your institution,</p>
+        <p>Where 1 = Strongly Agree, 2 = Agree, 3 = Neutral, 4 = Disagree, % = Strongly Disagree</p>
+    </div>
+    <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
 
         {% for message in messages %}
             {% if message.tags == 'error' %}
@@ -41,90 +50,39 @@
                 <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT MODEL PROTOTYPE
             </button>
         <div>
-            <h2>Demographic Information</h2>
+            <h6>Perceived Self Efficacy</h6>
             <form method="POST" class="card p-3 mt-2" autocomplete="off">
                 {% csrf_token %}
                 <div class="row">
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.gender|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.effective_security_knowledge|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.age|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.security_threats_avoidance|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.academic_year|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.privacy_setting_usage|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.field_of_study|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.suspicious_links_avoidance|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.university|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.suspicious_individuals_avoidance|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.university_funding|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.antivirus_usage_knowledge|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.mode_of_study|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.managing_social_connections|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_security_knowledge|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.privacy_issues_identification|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.social_media_usage|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.software_updates_security|as_crispy_field }}
                     </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.active_social_platforms|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.average_hours_s_media|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_security_concern|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.social_media_breaches|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_security_measure|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.privacy_security_education|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_self_protection|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_privacy_settings_awareness|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.often_review_privacy_settings|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_personal_info_sharing|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.victim_of_cyberbullying|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_privacy_security_features|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_sensitive_info_sharing|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_malicious_encounters|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.more_s_media_user_protection|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_privacy_policy_and_TOS|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.delete_account_due_to_privacy|as_crispy_field }}
-                    </div>
-                    <div class="col-4 mb-3 mt-1">
-                        {{ form.s_media_security_education|as_crispy_field }}
+                    <div class="col-3">
+                        {{ form.accounts_strong_passwords|as_crispy_field }}
                     </div>
                 </div>
                     <button type="submit" class="btn btn-outline-primary mt-3" style="width: 90px;">Submit</button>
