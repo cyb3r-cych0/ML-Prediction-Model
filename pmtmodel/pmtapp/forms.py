@@ -1,12 +1,12 @@
 from django import forms
 from django.forms import ModelForm
-from .models import DemographicInformation, \
-    PerceivedSeverity, \
-    PerceivedVulnerability, \
-    PerceivedResponseEfficacy, \
-    PerceivedSelfEfficacy, \
-    PerceivedPreventionAndResponseCost, \
-    IntendedUserBehaviourInSocialNetworkSecurity
+from .models import DemographicInformation
+from .models import PerceivedSeverity
+from .models import PerceivedVulnerability
+from .models import PerceivedResponseEfficacy
+from .models import PerceivedSelfEfficacy
+from .models import PerceivedPreventionAndResponseCost
+from .models import IntendedUserBehaviourInSocialNetworkSecurity
 
 
 class DemographicInformationForm(ModelForm):

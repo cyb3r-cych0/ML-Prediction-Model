@@ -138,16 +138,6 @@ def results(request):
     r_frt_test_mse = mean_squared_error(Y_test, y_r_frt_test_pred)
     r_frt_test_r2 = r2_score(Y_test, y_r_frt_test_pred)
 
-    # # data visualization of prediction results
-    # plt.figure(figsize=(5, 5))
-    # plt.scatter(x=y_train, y=y_l_reg_train_pred, alpha=0.3)
-    # z = np.polyfit(y_train, y_l_reg_train_pred, 1)
-    # p = np.poly1d(z)
-    # plt.plot(y_train, p(y_train), '#F8766D')
-    # plt.ylabel('Prediction')
-    # plt.xlabel('Experimental')
-    # plt.show()
-
     # """ replace values of target to 1 & 0 to train model """
     # data_frame['PMT'].replace(['THREAT APPRAISAL', 'COPING APPRAISAL'], [1, 0], inplace=True)
     # data_frame['GENDER'].replace(['MALE', 'FEMALE'], [1, 0], inplace=True)
