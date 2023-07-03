@@ -235,7 +235,7 @@ class PerceivedPreventionAndResponseCost(models.Model):
 
 
 # SECTION G
-class IntendedUserBehaviourInSocialNetworkSecurity(models.Model):
+class SocialNetworkSecurity(models.Model):
     PRIVACY_PERSONAL_INFO_MAINTENANCE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     PROACTIVE_PERSONAL_INFO_ACCESS_MANAGEMENT = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     USE_OF_SECURITY_FEATURES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]

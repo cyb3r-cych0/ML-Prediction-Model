@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
 
-from .models import DemographicInformation, PerceivedSeverity, PerceivedVulnerability, PerceivedResponseEfficacy, \
-    PerceivedSelfEfficacy
-from .forms import DemographicInformationForm, PerceivedSeverityForm, PerceivedVulnerabilityForm, \
-    PerceivedResponseEfficacyForm, PerceivedSelfEfficacyForm
+from .models import DemographicInformation
+from .forms import DemographicInformationForm
 from django.contrib import messages
-from django.http import HttpResponse, Http404
 import csv
 from django.conf import settings
 import os

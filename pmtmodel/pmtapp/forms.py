@@ -6,7 +6,7 @@ from .models import PerceivedVulnerability
 from .models import PerceivedResponseEfficacy
 from .models import PerceivedSelfEfficacy
 from .models import PerceivedPreventionAndResponseCost
-from .models import IntendedUserBehaviourInSocialNetworkSecurity
+from .models import SocialNetworkSecurity
 
 
 class DemographicInformationForm(ModelForm):
@@ -45,7 +45,7 @@ class PerceivedPreventionAndResponseCostForm(ModelForm):
         fields = "__all__"
 
 
-class IntendedUserBehaviourInSocialNetworkSecurityForm(ModelForm):
+class SocialNetworkSecurityForm(ModelForm):
     class Meta:
-        model = IntendedUserBehaviourInSocialNetworkSecurity
+        model = SocialNetworkSecurity
         fields = "__all__"
