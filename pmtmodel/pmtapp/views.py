@@ -18,7 +18,6 @@ from sklearn import metrics
 import statsmodels.api as sm
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 
@@ -582,7 +581,7 @@ def demographic_information(request):
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                'predictions': predictions
             }
             return render(request, 'results.html', context)
         else:

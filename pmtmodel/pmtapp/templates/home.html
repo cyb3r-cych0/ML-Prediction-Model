@@ -40,53 +40,39 @@
             <li>Intended User Behaviour</li>
             </ul>
         </div>
-        <div class="col-12">
-            <div class="col-4">
+        <div class="col-8">
                 <a href="{% url 'demographic_information' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Demographic Information</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Demographic Information</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'perceived_severity' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Perceived Severity</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Severity</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'perceived_vulnerability' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Perceived Vunerability</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Vunerability</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'perceived_response_efficacy' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Perceived Response Efficacy</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Response Efficacy</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'perceived_self_efficacy' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Perceived Self Efficacy</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Self Efficacy</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'perceived_prevention_response_cost' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Perceived Prevention Response Cost</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Prevention Response Cost</button>
                 </a>
-            </div>
 
-            <div class="col-4">
                 <a href="{% url 'intended_user_behaviour' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Intended User Behaviour</button>
+                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Intended User Behaviour</button>
                 </a>
-            </div>
         </div>
         <!-- Footer -->
         <div>
                 <footer class="bg-dark text-center text-lg-start text-light" id="footer">
-                    <div class="text-center p-3 mt-5" style="background-color: rgba(0, 0, 0, 0.2);">
+                    <div class="text-center p-3 mt-4" style="background-color: rgba(0, 0, 0, 0.2);">
                         &copy; {% now "Y" %}
                         <a class="text-light" href="#" style="text-decoration: none;">
                             <span  {% block footer %} style="color: greenyellow;" {% endblock %} >cyb3r-cych0</span>
