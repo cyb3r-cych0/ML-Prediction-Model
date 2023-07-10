@@ -28,5 +28,12 @@ urlpatterns = [
     path('perceived_self_efficacy/', views.perceived_self_efficacy, name='perceived_self_efficacy'),
     path('perceived_prevention_response_cost/', views.perceived_prevention_response_cost, name='perceived_prevention_response_cost'),
     path('intended_user_behaviour/', views.intended_user_behaviour, name='intended_user_behaviour'),
-    path('results/', views.results, name='results')
+    path('results/', views.results, name='results'),
+    path('perceived_severity_results/', views.perceived_severity_results, name='perceived_severity_results'),
+    path('perceived_vulnerability_results/', views.perceived_vulnerability_results, name='perceived_vulnerability_results'),
+    path('perceived_response_efficacy_results/', views.perceived_response_efficacy_results, name='perceived_response_efficacy_results'),
+    path('perceived_self_efficacy_results/', views.perceived_self_efficacy_results, name='perceived_self_efficacy_results'),
+    path('perceived_prevention_response_cost_results/', views.perceived_prevention_response_cost_results, name='perceived_prevention_response_cost_results'),
+    path('intended_user_behaviour_results/', views.intended_user_behaviour_results, name='intended_user_behaviour_results')
+
 ]

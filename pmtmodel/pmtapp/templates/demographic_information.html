@@ -31,10 +31,6 @@
                 <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
                     <a href="{% url 'demographic_information' %}" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
                 </div>
-            {% elif message.tags == 'success' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="{% url 'demographic_information' %}" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
             {% endif %}
         {% endfor %}
             <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
@@ -129,12 +125,6 @@
                 </div>
                     <button type="submit" class="btn btn-outline-primary mt-3" style="width: 90px;">Submit</button>
             </form>
-            <div class="col-12">
-                <a href="{% url 'results' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Analyse and Predict PMT Results</button>
-                </a>
-            </div>
-
         </div>
         <!-- Footer -->
             <footer class="bg-dark text-center text-lg-start text-light" id="footer">

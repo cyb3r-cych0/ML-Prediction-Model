@@ -3,8 +3,6 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
-    <meta charset="UTF-8">
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -21,19 +19,28 @@
         <!-- CSS Libraries -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+        <title>{% block title %} Home {% endblock %}</title>
 </head>
 <body>
     <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT MODEL PROTOTYPE
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT ML PROTOTYPE
         </button>
-        <div class="ml-4">
+        <div class="ml-4 mt-2">
             <h1>Cybersecurity User Behavior Prediction-Prototype</h1>
-            <p>This application predicts cybersecurity user behavior based on the PMT theory moderated by user demographics.</p>
-            <p>As this application is just a prototype, it only PREDICTS USING DEMOGRAPHIC INFORMATION</p>
-            <p>As We Keep Developing & Updating Our Software, Implementation Of The Updates Will Be Added To This Prototype</p>
+            <h6>This application predicts cybersecurity user behavior based on the PMT theory moderated by:</h6>
+            <ul>
+            <li>User Demographics</li>
+            <li>Perceived Severity</li>
+            <li>Perceived Vulnerability</li>
+            <li>Perceived Response Efficacy</li>
+            <li>Perceived Self Efficacy</li>
+            <li>Perceived Prevention Response Cost</li>
+            <li>Intended User Behaviour</li>
+            </ul>
         </div>
-        <div>
+        <div class="col-12">
             <div class="col-4">
                 <a href="{% url 'demographic_information' %}">
                     <button type="submit" class="btn btn-outline-success ml-3 mt-3" style="width: 100%;">Demographic Information</button>
