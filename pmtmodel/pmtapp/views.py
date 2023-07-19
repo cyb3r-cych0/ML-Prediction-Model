@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.http import HttpResponse
 from .models import DemographicInformation, PerceivedSeverity, PerceivedVulnerability, PerceivedResponseEfficacy, \
     PerceivedSelfEfficacy, PerceivedPreventionAndResponseCost, SocialNetworkSecurity
 from .forms import DemographicInformationForm, PerceivedSeverityForm, PerceivedVulnerabilityForm, \
@@ -24,6 +24,14 @@ import warnings
 
 def home(request):
     return render(request, 'home.html')
+
+
+def datasets(request):
+    ps = PerceivedSeverity.objects.all()
+    context = {
+        'ps': ps
+    }
+    return render(request, 'datasets.html', context)
 
 
 # SECTION B
@@ -54,6 +62,7 @@ def perceived_severity(request):
                          item.s_media_negative_consequences])
 
             data_frame = pd.read_csv('static/perceived_severity.csv')
+
             # Extract the features and target variables from the data
             y = data_frame['Negative Consequences']
             X = data_frame.drop('Negative Consequences', axis=1)
@@ -61,9 +70,35 @@ def perceived_severity(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('potential_breach_consequences'))
@@ -81,14 +116,34 @@ def perceived_severity(request):
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
                            feature8, feature9]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'perceived_severity_results.html', context)
         else:
@@ -139,9 +194,35 @@ def perceived_vulnerability(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('security_breach_likelyness'))
@@ -158,15 +239,34 @@ def perceived_vulnerability(request):
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8, feature9]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
-                'model': model
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'perceived_vulnerability_results.html', context)
         else:
@@ -215,9 +315,35 @@ def perceived_response_efficacy(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('effective_security_measures'))
@@ -235,14 +361,34 @@ def perceived_response_efficacy(request):
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8,
                            feature9]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'perceived_response_efficacy_results.html', context)
         else:
@@ -292,9 +438,35 @@ def perceived_self_efficacy(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('effective_security_knowledge'))
@@ -312,14 +484,34 @@ def perceived_self_efficacy(request):
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8,
                            feature9]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'perceived_self_efficacy_results.html', context)
         else:
@@ -370,9 +562,35 @@ def perceived_prevention_response_cost(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('security_implementation_efforts_high'))
@@ -384,19 +602,38 @@ def perceived_prevention_response_cost(request):
             feature7 = float(request.POST.get('security_financial_cost_reasonable'))
             feature8 = float(request.POST.get('security_updates_time_and_efforts_reasonable'))
             # feature9 = float(request.POST.get('software_updates_security'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'perceived_prevention_response_cost_results.html', context)
         else:
@@ -447,9 +684,35 @@ def intended_user_behaviour(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('privacy_personal_info_maintenance'))
@@ -467,14 +730,34 @@ def intended_user_behaviour(request):
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
                            feature8, feature9]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions,
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'intended_user_behaviour_results.html', context)
         else:
@@ -536,9 +819,35 @@ def demographic_information(request):
             # Split the data into training and testing sets
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # Train your machine learning model
-            model = LinearRegression()
-            model.fit(X_train, y_train)
+            # Train model
+            """ Linear Regression """
+
+            l_reg_model = LinearRegression()
+            l_reg_model.fit(X_train, y_train)
+
+            # train model to make prediction
+            y_l_reg_train_pred = l_reg_model.predict(X_train)
+            y_l_reg_test_pred = l_reg_model.predict(X_test)
+
+            # Evaluate Model Performance
+            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
+            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
+            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
+            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
+
+            """ Random Forest """
+
+            # Training Model
+            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
+            r_frt_model.fit(X_train, y_train)
+            y_r_frt_train_pred = r_frt_model.predict(X_train)
+            y_r_frt_test_pred = r_frt_model.predict(X_test)
+
+            # Evaluate model performance
+            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
+            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
+            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
+            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
 
             # Get the input data from the form
             feature1 = float(request.POST.get('gender'))
@@ -574,14 +883,34 @@ def demographic_information(request):
                            feature15, feature16, feature17, feature18, feature19, feature20, feature21,
                            feature22, feature23, feature24, feature25]]  # Create a list of lists if multiple samples
 
-            # Make predictions
-            predictions = model.predict(input_data)
+            # make predictions using linear regression
+            y_l_reg_test_pred = l_reg_model.predict(input_data)
 
-            # Do something with the predictions
+            # Make predictions using random forest
+            y_r_frt_test_pred = r_frt_model.predict(input_data)
+
+            # Evaluate model performance
+            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
+            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
+            # r_frt_test_mse = mean_squared_error(y_test, ret)
+            # r_frt_test_r2 = r2_score(y_test, ret)
 
             # Pass the predictions to the template for rendering
             context = {
-                'predictions': predictions
+                # linear regression train & test
+                'l_reg_train_mse': l_reg_train_mse,
+                'l_reg_train_r2': l_reg_train_r2,
+                'l_reg_test_mse': l_reg_test_mse,
+                'l_reg_test_r2': l_reg_test_r2,
+                # linear regression predict
+                'y_l_reg_test_pred': y_l_reg_test_pred,
+                # random forest train & test
+                'r_frt_train_mse': r_frt_train_mse,
+                'r_frt_train_r2': r_frt_train_r2,
+                'r_frt_test_mse': r_frt_test_mse,
+                'r_frt_test_r2': r_frt_test_r2,
+                # random forest predict
+                'y_r_frt_test_pred': y_r_frt_test_pred
             }
             return render(request, 'results.html', context)
         else:

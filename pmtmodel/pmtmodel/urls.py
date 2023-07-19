@@ -21,6 +21,7 @@ from pmtapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('datasets/', views.datasets, name='datasets'),
     path('demographic_information/', views.demographic_information, name='demographic_information'),
     path('perceived_severity/', views.perceived_severity, name='perceived_severity'),
     path('perceived_vulnerability/', views.perceived_vulnerability, name='perceived_vulnerability'),

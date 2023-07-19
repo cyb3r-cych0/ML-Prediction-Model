@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datasets</title>
+</head>
+<body>
+     <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">potential_breach_consequences</th>
+                            <th scope="col">impact_of_info</th>
+                            <th scope="col">substantial_harm_by_breaches</th>
+                            <th scope="col">s_media_threats_concern</th>
+                            <th scope="col">negative_impacts_breaches</th>
+                            <th scope="col">info_sharing_risks</th>
+                            <th scope="col">serious_s_media_security</th>
+                            <th scope="col">substantial_data_breaches</th>
+                            <th scope="col">high_network_severity</th>
+                            <th scope="col">s_media_negative_consequences</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in ps %}
+                        <tr>
+                            <td>{{ p.id }}</td>
+                            <td>{{ p.potential_breach_consequences }}</td>
+                            <td>{{ p.impact_of_info }}</td>
+                            <td>{{ p.substantial_harm_by_breaches }}</td>
+                            <td>{{ p.s_media_threats_concern }}</td>
+                            <td>{{ p.negative_impacts_breaches }}</td>
+                            <td>{{ p.info_sharing_risks }}</td>
+                            <td>{{ p.serious_s_media_security }}</td>
+                            <td>{{ p.substantial_data_breaches }}</td>
+                            <td>{{ p.high_network_severity }}</td>
+                            <td>{{ p.s_media_negative_consequences }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--End Table-->
+</body>
+</html>
