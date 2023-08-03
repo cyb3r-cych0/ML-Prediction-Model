@@ -4,8 +4,8 @@ from django.db import models
 # SECTION A
 class DemographicInformation(models.Model):
     GENDER_CHOICES = [('1', 'Male'), ('2', 'Female'), ('3', 'Prefer Not Say')]
-    AGE_CHOICES = [('1', '18-20'), ('2', '21-25'), ('3', '26-30'), ('4', '31-35'),
-                   ('5', '36 & Above')]
+    AGE_CHOICES = [('19', '18-20'), ('23', '21-25'), ('28', '26-30'), ('33', '31-35'),
+                   ('40', '36 & Above')]
     ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
                         ('4', 'Senior/Final-year')]
     FIELD_CHOICES = [('1', 'Arts/Humanities'), ('2', 'Business/Management'),
@@ -106,7 +106,7 @@ class PerceivedSeverity(models.Model):
     INFO_SHARING_RISKS = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SERIOUS_S_MEDIA_SECURITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SUBSTANTIAL_DATA_BREACHES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
-    HIGH_NETWORK_SEVERITY =[('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
+    HIGH_NETWORK_SEVERITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     S_MEDIA_NEGATIVE_CONSEQUENCES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
     potential_breach_consequences = models.CharField('The potential consequences of security breaches on social networks are severe.', choices=POTENTIAL_BREACH_CONSEQUENCES, max_length=20)
@@ -229,6 +229,7 @@ class PerceivedPreventionAndResponseCost(models.Model):
     security_financial_cost_reasonable = models.CharField('The financial cost associated with securing my social network accounts is reasonable.', choices=SECURITY_FINANCIAL_COST_REASONABLE, max_length=20)
     security_updates_time_and_efforts_reasonable = models.CharField('The time and effort needed to regularly update software and applications for enhanced security is reasonable.', choices=SECURITY_UPDATES_TIME_AND_EFFORTS_REASONABLE, max_length=20)
     security_potential_risks_outweighs_implementations = models.CharField('The potential risks associated with not taking preventive measures on social networks outweigh the effort required to implement them.', choices=SECURITY_POTENTIAL_RISKS_OUTWEIGHS_IMPLEMENTATION, max_length=20)
+    security_potential_risks_outweighs_implementation = models.CharField('The potential risks associated with not taking preventive measures on social networks outweigh the effort required to implement them.', choices=SECURITY_POTENTIAL_RISKS_OUTWEIGHS_IMPLEMENTATION, max_length=20)
 
     def __str__(self):
         return self.security_implementation_efforts_high

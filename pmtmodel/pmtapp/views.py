@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from .models import DemographicInformation, PerceivedSeverity, PerceivedVulnerability, PerceivedResponseEfficacy, \
     PerceivedSelfEfficacy, PerceivedPreventionAndResponseCost, SocialNetworkSecurity
 from .forms import DemographicInformationForm, PerceivedSeverityForm, PerceivedVulnerabilityForm, \
@@ -9,6 +9,9 @@ from django.contrib import messages
 import csv
 from django.conf import settings
 import os
+import joblib
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 """ ml model """
 import pandas as pd
@@ -27,11 +30,188 @@ def home(request):
 
 
 def datasets(request):
+    # pv = PerceivedVulnerability.objects.all()
+    # di = DemographicInformation.objects.all()
+    # pse = PerceivedSelfEfficacy.objects.all()
+    # pre = PerceivedResponseEfficacy.objects.all()
+    # pprs = PerceivedPreventionAndResponseCost.objects.all()
+    # sns = SocialNetworkSecurity
+    # context = {
+    #     'ps': ps,
+    #     # 'pv': pv,
+    #     # 'di': di,
+    #     # 'pse': pse,
+    #     # 'pre': pre,
+    #     # 'pprs': pprs,
+    #     # 'sns': sns
+    # }
+    return render(request, 'datasets.html')
+
+
+def ps_csv(request):
     ps = PerceivedSeverity.objects.all()
-    context = {
-        'ps': ps
-    }
-    return render(request, 'datasets.html', context)
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=perceived_severity.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['potential_breach_consequences', 'impact_of_info', 'substantial_harm_by_breaches', 's_media_threats_concern',
+         'negative_impacts_breaches', 'info_sharing_risks', 'serious_s_media_security', 'substantial_data_breaches',
+         'high_network_severity', 's_media_negative_consequences'])
+    ps_fields = ps.values_list('potential_breach_consequences', 'impact_of_info', 'substantial_harm_by_breaches',
+                               's_media_threats_concern', 'negative_impacts_breaches', 'info_sharing_risks',
+                               'serious_s_media_security', 'substantial_data_breaches', 'high_network_severity',
+                               's_media_negative_consequences')
+
+    for data in ps_fields:
+        writer.writerow(data)
+    return response
+
+
+def pv_csv(request):
+    pv = PerceivedVulnerability.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=perceived_vulnerability.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['security_breach_likelyness', 'vulnerable_security_breach', 'info_sharing_risk_concern', 'protect_info_online',
+         'online_potential_threats', 'update_privacy_settings', 'likely_2FA_authentication', 'concerned_info_breaches',
+         'online_info_privacy', 'report_suspicious_activity'])
+    pv_fields = pv.values_list('security_breach_likelyness', 'vulnerable_security_breach', 'info_sharing_risk_concern',
+                               'protect_info_online',
+                               'online_potential_threats', 'update_privacy_settings', 'likely_2FA_authentication',
+                               'concerned_info_breaches',
+                               'online_info_privacy', 'report_suspicious_activity')
+
+    for data in pv_fields:
+        writer.writerow(data)
+    return response
+
+
+def pre_csv(request):
+    pre = PerceivedResponseEfficacy.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=perceived_response_efficacy.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['effective_security_measures', 'privacy_settings_protecting_info', 'strong_password_security',
+         'regular_security_updates',
+         'cautious_link_clicking', 'info_sharing_security', 'minimize_suspicious_individuals', 'backing_up_data',
+         'privacy_security_updates', 'sharing_info_security_reduction'])
+    pre_fields = pre.values_list('effective_security_measures', 'privacy_settings_protecting_info',
+                                 'strong_password_security', 'regular_security_updates',
+                                 'cautious_link_clicking', 'info_sharing_security', 'minimize_suspicious_individuals',
+                                 'backing_up_data',
+                                 'privacy_security_updates', 'sharing_info_security_reduction')
+
+    for data in pre_fields:
+        writer.writerow(data)
+    return response
+
+
+def pse_csv(request):
+    pse = PerceivedSelfEfficacy.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=perceived_self_efficacy.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['effective_security_knowledge', 'security_threats_avoidance', 'privacy_setting_usage',
+         'suspicious_links_avoidance',
+         'suspicious_individuals_avoidance', 'antivirus_usage_knowledge', 'managing_social_connections',
+         'privacy_issues_identification',
+         'software_updates_security', 'accounts_strong_passwords'])
+    pse_fields = pse.values_list('effective_security_knowledge', 'security_threats_avoidance', 'privacy_setting_usage',
+                                 'suspicious_links_avoidance',
+                                 'suspicious_individuals_avoidance', 'antivirus_usage_knowledge',
+                                 'managing_social_connections', 'privacy_issues_identification',
+                                 'software_updates_security', 'accounts_strong_passwords')
+
+    for data in pse_fields:
+        writer.writerow(data)
+    return response
+
+
+def pprc_csv(request):
+    pprc = PerceivedPreventionAndResponseCost.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=perceived_prevention_response_cost.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['security_implementation_efforts_high', 'security_financial_enhancing_high', 'security_efforts_practices_high',
+         'security_inconvenience_outweighs_benefits',
+         'security_loss_functionality_undesirable', 'security_incidence_response_overwhelming',
+         'security_financial_cost_reasonable',
+         'security_updates_time_and_efforts_reasonable',
+         'security_potential_risks_outweighs_implementations'])
+    pprc_fields = pprc.values_list('security_implementation_efforts_high', 'security_financial_enhancing_high',
+                                   'security_efforts_practices_high',
+                                   'security_inconvenience_outweighs_benefits',
+                                   'security_loss_functionality_undesirable',
+                                   'security_incidence_response_overwhelming', 'security_financial_cost_reasonable',
+                                   'security_updates_time_and_efforts_reasonable',
+                                   'security_potential_risks_outweighs_implementations')
+
+    for data in pprc_fields:
+        writer.writerow(data)
+    return response
+
+
+def sns_csv(request):
+    sns = SocialNetworkSecurity.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=intended_user_behavior.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['privacy_personal_info_maintenance', 'proactive_personal_info_access_management', 'use_of_security_features',
+         'personal_info_risk_consciousness',
+         'secure_account_with_regular_updates', 'learn_social_network_security', 'interacting_with_suspicious_accounts',
+         'block_report_suspicious_accounts',
+         'educate_social_network_security', 'mind_privacy_policies_before_using'])
+    sns_fields = sns.values_list('privacy_personal_info_maintenance', 'proactive_personal_info_access_management',
+                                 'use_of_security_features',
+                                 'personal_info_risk_consciousness',
+                                 'secure_account_with_regular_updates', 'learn_social_network_security',
+                                 'interacting_with_suspicious_accounts',
+                                 'block_report_suspicious_accounts',
+                                 'educate_social_network_security', 'mind_privacy_policies_before_using')
+
+    for data in sns_fields:
+        writer.writerow(data)
+    return response
+
+
+def di_csv(request):
+    di = DemographicInformation.objects.all()
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=demographic_information.csv'
+    writer = csv.writer(response)
+    writer.writerow(
+        ['gender', 'age', 'academic_year',
+         'field_of_study',
+         'university', 'university_funding', 'mode_of_study',
+         's_media_security_knowledge',
+         'social_media_usage', 'active_social_platforms', 'average_hours_s_media', 's_media_security_concern',
+         'social_media_breaches', 's_media_security_measure', 'privacy_security_education', 's_media_self_protection',
+         's_media_privacy_settings_awareness', 'often_review_privacy_settings', 's_media_personal_info_sharing',
+         'victim_of_cyberbullying', 's_media_privacy_security_features', 's_media_sensitive_info_sharing',
+         's_media_malicious_encounters', 'more_s_media_user_protection', 's_media_privacy_policy_and_TOS',
+         'delete_account_due_to_privacy', 's_media_security_education'])
+    di_fields = di.values_list('gender', 'age', 'academic_year',
+                               'field_of_study',
+                               'university', 'university_funding', 'mode_of_study',
+                               's_media_security_knowledge',
+                               'social_media_usage', 'active_social_platforms', 'average_hours_s_media',
+                               's_media_security_concern', 'social_media_breaches', 's_media_security_measure',
+                               'privacy_security_education', 's_media_self_protection',
+                               's_media_privacy_settings_awareness', 'often_review_privacy_settings',
+                               's_media_personal_info_sharing', 'victim_of_cyberbullying',
+                               's_media_privacy_security_features', 's_media_sensitive_info_sharing',
+                               's_media_malicious_encounters', 'more_s_media_user_protection',
+                               's_media_privacy_policy_and_TOS', 'delete_account_due_to_privacy',
+                               's_media_security_education')
+
+    for data in di_fields:
+        writer.writerow(data)
+    return response
 
 
 # SECTION B
@@ -44,61 +224,8 @@ def perceived_severity(request):
             messages.success(request, 'Data Submitted Successfully.')
             # model
             warnings.filterwarnings("ignore")
-            data = PerceivedSeverity.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'perceived_severity.csv')
 
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Breach Consequences', 'Info Impact', 'Breach Harms', 'Threats Concern', 'Breach Impacts',
-                     'Info Risks',
-                     'Social Security', 'Substantial Breaches', 'Network Security', 'Negative Consequences'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.potential_breach_consequences, item.impact_of_info, item.substantial_harm_by_breaches,
-                         item.s_media_threats_concern, item.negative_impacts_breaches, item.info_sharing_risks,
-                         item.serious_s_media_security, item.substantial_data_breaches, item.high_network_severity,
-                         item.s_media_negative_consequences])
-
-            data_frame = pd.read_csv('static/perceived_severity.csv')
-
-            # Extract the features and target variables from the data
-            y = data_frame['Negative Consequences']
-            X = data_frame.drop('Negative Consequences', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('potential_breach_consequences'))
@@ -110,40 +237,18 @@ def perceived_severity(request):
             feature7 = float(request.POST.get('serious_s_media_security'))
             feature8 = float(request.POST.get('substantial_data_breaches'))
             feature9 = float(request.POST.get('high_network_severity'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
+            feature10 = float(request.POST.get('s_media_negative_consequences'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
-                           feature8, feature9]]  # Create a list of lists if multiple samples
+                           feature8, feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict,
             }
             return render(request, 'perceived_severity_results.html', context)
         else:
@@ -167,62 +272,9 @@ def perceived_vulnerability(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
+
             # model
-            warnings.filterwarnings("ignore")
-            # Retrieve the data from your Django model
-            data = PerceivedVulnerability.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'perceived_vulnerability.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Breach Consequences', 'Info Impact', 'Threats Concern', 'Breach Impacts',
-                     'Info Risks',
-                     'Social Security', 'Substantial Breaches', 'Mjampo', 'Network Security', 'Negative'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.security_breach_likelyness, item.vulnerable_security_breach, item.info_sharing_risk_concern,
-                         item.protect_info_online, item.online_potential_threats, item.update_privacy_settings,
-                         item.likely_2FA_authentication, item.concerned_info_breaches, item.online_info_privacy, item.report_suspicious_activity])
-
-            data_frame = pd.read_csv('static/perceived_vulnerability.csv')
-            # Extract the features and target variables from the data
-            y = data_frame['Negative']
-            X = data_frame.drop('Negative', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('security_breach_likelyness'))
@@ -234,39 +286,18 @@ def perceived_vulnerability(request):
             feature7 = float(request.POST.get('likely_2FA_authentication'))
             feature8 = float(request.POST.get('concerned_info_breaches'))
             feature9 = float(request.POST.get('online_info_privacy'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
+            feature10 = float(request.POST.get('report_suspicious_activity'))
 
             # Prepare the input data for prediction
-            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8, feature9]]  # Create a list of lists if multiple samples
+            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8,
+                           feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict,
             }
             return render(request, 'perceived_vulnerability_results.html', context)
         else:
@@ -289,61 +320,9 @@ def perceived_response_efficacy(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
+
             # model
-            warnings.filterwarnings("ignore")
-            data = PerceivedResponseEfficacy.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'perceived_response_efficacy.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Security', 'Settings', 'Password', 'Updates', 'Links', 'Sharing',
-                     'Suspicious', 'Backup', 'Privacy', 'Reduction'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.effective_security_measures, item.privacy_settings_protecting_info, item.strong_password_security,
-                         item.regular_security_updates, item.cautious_link_clicking, item.info_sharing_security,
-                         item.minimize_suspicious_individuals, item.backing_up_data, item.privacy_security_updates,
-                         item.sharing_info_security_reduction])
-
-            data_frame = pd.read_csv('static/perceived_response_efficacy.csv')
-            # Extract the features and target variables from the data
-            y = data_frame['Reduction']
-            X = data_frame.drop('Reduction', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('effective_security_measures'))
@@ -355,40 +334,18 @@ def perceived_response_efficacy(request):
             feature7 = float(request.POST.get('minimize_suspicious_individuals'))
             feature8 = float(request.POST.get('backing_up_data'))
             feature9 = float(request.POST.get('privacy_security_updates'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
+            feature10 = float(request.POST.get('sharing_info_security_reduction'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8,
-                           feature9]]  # Create a list of lists if multiple samples
+                           feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict
             }
             return render(request, 'perceived_response_efficacy_results.html', context)
         else:
@@ -411,62 +368,9 @@ def perceived_self_efficacy(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
+
             # model
-            warnings.filterwarnings("ignore")
-            data = PerceivedSelfEfficacy.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'perceived_self_efficacy.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Knowledge', 'Threats', 'Privacy', 'Links', 'Individuals', 'Antivirus',
-                     'Social', 'Issues', 'Updates', 'Passwords'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.effective_security_knowledge, item.security_threats_avoidance,
-                         item.privacy_setting_usage,
-                         item.suspicious_links_avoidance, item.suspicious_individuals_avoidance, item.antivirus_usage_knowledge,
-                         item.managing_social_connections, item.privacy_issues_identification, item.software_updates_security,
-                         item.accounts_strong_passwords])
-
-            data_frame = pd.read_csv('static/perceived_self_efficacy.csv')
-            # Extract the features and target variables from the data
-            y = data_frame['Passwords']
-            X = data_frame.drop('Passwords', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('effective_security_knowledge'))
@@ -478,40 +382,18 @@ def perceived_self_efficacy(request):
             feature7 = float(request.POST.get('managing_social_connections'))
             feature8 = float(request.POST.get('privacy_issues_identification'))
             feature9 = float(request.POST.get('software_updates_security'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
+            feature10 = float(request.POST.get('accounts_strong_passwords'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8,
-                           feature9]]  # Create a list of lists if multiple samples
+                           feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict
             }
             return render(request, 'perceived_self_efficacy_results.html', context)
         else:
@@ -534,63 +416,9 @@ def perceived_prevention_response_cost(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
+
             # model
-            warnings.filterwarnings("ignore")
-            data = PerceivedPreventionAndResponseCost.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'perceived_prevention_response_cost.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Implementation', 'Financial', 'Efforts', 'Inconvenience', 'Undesirable', 'Overwhelming',
-                     'Cost', 'Updates', 'Risks'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.security_implementation_efforts_high, item.security_financial_enhancing_high,
-                         item.security_efforts_practices_high,
-                         item.security_inconvenience_outweighs_benefits, item.security_loss_functionality_undesirable,
-                         item.security_incidence_response_overwhelming,
-                         item.security_financial_cost_reasonable, item.security_updates_time_and_efforts_reasonable,
-                         item.security_potential_risks_outweighs_implementations])
-
-            data_frame = pd.read_csv('static/perceived_prevention_response_cost.csv')
-            # Extract the features and target variables from the data
-            y = data_frame['Risks']
-            X = data_frame.drop('Risks', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('security_implementation_efforts_high'))
@@ -601,39 +429,18 @@ def perceived_prevention_response_cost(request):
             feature6 = float(request.POST.get('security_incidence_response_overwhelming'))
             feature7 = float(request.POST.get('security_financial_cost_reasonable'))
             feature8 = float(request.POST.get('security_updates_time_and_efforts_reasonable'))
-            # feature9 = float(request.POST.get('software_updates_security'))
-
+            feature9 = float(request.POST.get('security_potential_risks_outweighs_implementations'))
+            feature10 = float(request.POST.get('security_potential_risks_outweighs_implementation'))
             # Prepare the input data for prediction
-            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8]]  # Create a list of lists if multiple samples
+            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
+                           feature8, feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+               'predict': predict
             }
             return render(request, 'perceived_prevention_response_cost_results.html', context)
         else:
@@ -656,63 +463,9 @@ def intended_user_behaviour(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
+
             # model
-            warnings.filterwarnings("ignore")
-            data = SocialNetworkSecurity.objects.all()
-            file_path = os.path.join(settings.STATIC_ROOT, 'intended_user_behaviour.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Maintenance', 'Proactive', 'Features', 'Personal', 'Updates', 'Security',
-                     'Interacting', 'Block', 'Educate', 'Mindful'])
-
-                for item in data:
-                    writer.writerow(
-                        [item.privacy_personal_info_maintenance, item.proactive_personal_info_access_management,
-                         item.use_of_security_features,
-                         item.personal_info_risk_consciousness, item.secure_account_with_regular_updates,
-                         item.learn_social_network_security,
-                         item.interacting_with_suspicious_accounts, item.block_report_suspicious_accounts,
-                         item.educate_social_network_security, item.mind_privacy_policies_before_using])
-
-            data_frame = pd.read_csv('static/intended_user_behaviour.csv')
-            # Extract the features and target variables from the data
-            y = data_frame['Mindful']
-            X = data_frame.drop('Mindful', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_efficacy_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('privacy_personal_info_maintenance'))
@@ -724,40 +477,18 @@ def intended_user_behaviour(request):
             feature7 = float(request.POST.get('interacting_with_suspicious_accounts'))
             feature8 = float(request.POST.get('block_report_suspicious_accounts'))
             feature9 = float(request.POST.get('educate_social_network_security'))
-            # feature10 = float(request.POST.get('report_suspicious_activity'))
+            feature10 = float(request.POST.get('mind_privacy_policies_before_using'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
-                           feature8, feature9]]  # Create a list of lists if multiple samples
+                           feature8, feature9, feature10]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict
             }
             return render(request, 'intended_user_behaviour_results.html', context)
         else:
@@ -781,73 +512,8 @@ def demographic_information(request):
             form.save()
             messages.success(request, 'Data Submitted Successfully.')
             warnings.filterwarnings("ignore")
-            data = DemographicInformation.objects.all()
 
-            file_path = os.path.join(settings.STATIC_ROOT, 'cybersecurity_data.csv')
-
-            with open(file_path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(
-                    ['Gender', 'Age', 'Academic Yr', 'Field', 'University', 'Funding', 'Mode', 'Knowledge', 'Usage',
-                     'Active',
-                     'Hours', 'Concern', 'Breaches', 'Measure', 'Sec Edu', 'Protection', 'Awareness', 'Settings',
-                     'Sharing',
-                     'Cyberbullying', 'Features', 'Sensitive', 'Encounters' 'Uprotect', 'TOS', 'Delete', 'SMedu'])
-
-                for item in data:
-                    writer.writerow([item.gender, item.age, item.academic_year, item.field_of_study, item.university,
-                                     item.university_funding, item.mode_of_study, item.s_media_security_knowledge,
-                                     item.social_media_usage, item.active_social_platforms,
-                                     item.average_hours_s_media, item.s_media_security_concern,
-                                     item.social_media_breaches,
-                                     item.s_media_security_measure, item.privacy_security_education,
-                                     item.s_media_self_protection,
-                                     item.s_media_privacy_settings_awareness, item.often_review_privacy_settings,
-                                     item.s_media_personal_info_sharing, item.victim_of_cyberbullying,
-                                     item.s_media_privacy_security_features, item.s_media_sensitive_info_sharing,
-                                     item.s_media_malicious_encounters, item.more_s_media_user_protection,
-                                     item.s_media_privacy_policy_and_TOS, item.delete_account_due_to_privacy,
-                                     item.s_media_security_education])
-
-            # Read/Load the data (pandas)
-            data_frame = pd.read_csv('static/cybersecurity_data.csv')
-
-            # Extract the features and target variables from the data
-            y = data_frame['SMedu']
-            X = data_frame.drop('SMedu', axis=1)
-
-            # Split the data into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train model
-            """ Linear Regression """
-
-            l_reg_model = LinearRegression()
-            l_reg_model.fit(X_train, y_train)
-
-            # train model to make prediction
-            y_l_reg_train_pred = l_reg_model.predict(X_train)
-            y_l_reg_test_pred = l_reg_model.predict(X_test)
-
-            # Evaluate Model Performance
-            l_reg_train_mse = mean_squared_error(y_train, y_l_reg_train_pred)
-            l_reg_train_r2 = r2_score(y_train, y_l_reg_train_pred)
-            l_reg_test_mse = mean_squared_error(y_test, y_l_reg_test_pred)
-            l_reg_test_r2 = r2_score(y_test, y_l_reg_test_pred)
-
-            """ Random Forest """
-
-            # Training Model
-            r_frt_model = RandomForestRegressor(max_depth=2, random_state=100)
-            r_frt_model.fit(X_train, y_train)
-            y_r_frt_train_pred = r_frt_model.predict(X_train)
-            y_r_frt_test_pred = r_frt_model.predict(X_test)
-
-            # Evaluate model performance
-            r_frt_train_mse = mean_squared_error(y_train, y_r_frt_train_pred)
-            r_frt_train_r2 = r2_score(y_train, y_r_frt_train_pred)
-            r_frt_test_mse = mean_squared_error(y_test, y_r_frt_test_pred)
-            r_frt_test_r2 = r2_score(y_test, y_r_frt_test_pred)
+            model = joblib.load('static/ml_cybersecurity_pmt.joblib')
 
             # Get the input data from the form
             feature1 = float(request.POST.get('gender'))
@@ -875,42 +541,22 @@ def demographic_information(request):
             feature23 = float(request.POST.get('s_media_malicious_encounters'))
             feature24 = float(request.POST.get('more_s_media_user_protection'))
             feature25 = float(request.POST.get('s_media_privacy_policy_and_TOS'))
-            # feature26 = float(request.POST.get('delete_account_due_to_privacy'))
+            feature26 = float(request.POST.get('delete_account_due_to_privacy'))
+            feature27 = float(request.POST.get('s_media_security_education'))
 
             # Prepare the input data for prediction
             input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
                            feature8, feature9, feature10, feature11, feature12, feature13, feature14,
                            feature15, feature16, feature17, feature18, feature19, feature20, feature21,
-                           feature22, feature23, feature24, feature25]]  # Create a list of lists if multiple samples
+                           feature22, feature23, feature24, feature25, feature26,
+                           feature27]]  # Create a list of lists if multiple samples
 
             # make predictions using linear regression
-            y_l_reg_test_pred = l_reg_model.predict(input_data)
-
-            # Make predictions using random forest
-            y_r_frt_test_pred = r_frt_model.predict(input_data)
-
-            # Evaluate model performance
-            # r_frt_predict_mse = mean_squared_error(y_train, y_r_frt_test_pred)
-            # r_frt_predict_r2 = r2_score(y_train, y_r_frt_test_pred)
-            # r_frt_test_mse = mean_squared_error(y_test, ret)
-            # r_frt_test_r2 = r2_score(y_test, ret)
+            predict = model.predict(input_data)
 
             # Pass the predictions to the template for rendering
             context = {
-                # linear regression train & test
-                'l_reg_train_mse': l_reg_train_mse,
-                'l_reg_train_r2': l_reg_train_r2,
-                'l_reg_test_mse': l_reg_test_mse,
-                'l_reg_test_r2': l_reg_test_r2,
-                # linear regression predict
-                'y_l_reg_test_pred': y_l_reg_test_pred,
-                # random forest train & test
-                'r_frt_train_mse': r_frt_train_mse,
-                'r_frt_train_r2': r_frt_train_r2,
-                'r_frt_test_mse': r_frt_test_mse,
-                'r_frt_test_r2': r_frt_test_r2,
-                # random forest predict
-                'y_r_frt_test_pred': y_r_frt_test_pred
+                'predict': predict
             }
             return render(request, 'results.html', context)
         else:

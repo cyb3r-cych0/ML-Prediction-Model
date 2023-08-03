@@ -36,39 +36,7 @@
         {% endfor %}
 
         <h4>Training & Testing Model</h4>
-        <div class="container m-2" style="width: 50%; font-size: 14px">
-            <h5>Linear Regression</h5>
-            <p>&nbsp;&nbsp; >> Train Mean Squared Error : &nbsp;&nbsp;{{ l_reg_train_mse }}</p>
-            <p>&nbsp;&nbsp; >> Train r2 Score: &nbsp;&nbsp;{{ l_reg_train_r2 }}</p>
-            <p>&nbsp;&nbsp; >> Test Mean Squared Error: &nbsp;&nbsp;{{ l_reg_test_mse }}</p>
-            <p>&nbsp;&nbsp; >> Test r2 Score: &nbsp;&nbsp;{{ l_reg_test_r2 }}</p>
-        </div>
-        <div class="container m-2" style="width: 50%; font-size: 14px">
-            <h5>Random Forest Regressor</h5>
-            <p>&nbsp;&nbsp; >> Train Mean Squared Error : &nbsp;&nbsp;{{ r_frt_train_mse }}</p>
-            <p>&nbsp;&nbsp; >> Train r2 Score: &nbsp;&nbsp;{{ r_frt_train_r2 }}</p>
-            <p>&nbsp;&nbsp; >> Test Mean Squared Error: &nbsp;&nbsp;{{ r_frt_test_mse }}</p>
-            <p>&nbsp;&nbsp; >> Test r2 Score: &nbsp;&nbsp;{{ r_frt_test_r2 }}</p>
-        </div>
-
-        <h4>Make Prediction Using Trained Model</h4>
-        <div class="container m-2" style="width: 50%; font-size: 14px">
-            <h5>Random Forest Prediction</h5>
-            <p>&nbsp;&nbsp; >> Predicted Value {{ y_r_frt_test_pred }}</p>
-
-            <h5>Linear Regression Prediction</h5>
-            <p>&nbsp;&nbsp; >> Predicted Value {{ y_l_reg_test_pred }}</p>
-        </div>
-
-        <div class="container m-2" style="width: 50%; font-size: 14px">
-            {% if y_r_frt_test_pred <= 2.5 %}
-                <h6>PMT Appraisal Prediction</h6>
-                <p>&nbsp;&nbsp; >> Predicted Results &nbsp; /*/&nbsp; You are categorized under [THREAT APPRAISAL] &nbsp;/*/</p>
-            {% elif y_r_frt_test_pred > 2.5 %}
-                <h6>PMT Appraisal Prediction</h6>
-                <p>&nbsp;&nbsp; >> Predicted Results &nbsp; /*/&nbsp; You are categorized under [COPING APPRAISAL] &nbsp;/*/</p>
-            {% endif %}
-        </div>
+        {{ predict }}
 
         <div class="col-6 m-2">
             <a href="{% url 'intended_user_behaviour' %}">
