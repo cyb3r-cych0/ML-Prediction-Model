@@ -1,13 +1,15 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+import joblib
 
 
 # SECTION A
 class DemographicInformation(models.Model):
-    GENDER_CHOICES = [('1', 'Male'), ('2', 'Female'), ('3', 'Prefer Not Say')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female')]
     AGE_CHOICES = [('19', '18-20'), ('23', '21-25'), ('28', '26-30'), ('33', '31-35'),
                    ('40', '36 & Above')]
     ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
-                        ('4', 'Senior/Final-year')]
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
     FIELD_CHOICES = [('1', 'Arts/Humanities'), ('2', 'Business/Management'),
                      ('3', 'Engineering/Technology'), ('4', 'Sciences'),
                      ('5', 'Social Sciences'), ('6', 'Health/Medical Sciences'),
@@ -65,11 +67,11 @@ class DemographicInformation(models.Model):
     SOCIAL_MEDIA_SECURITY_EDU_CHOICES = [('1', 'Yes'), ('0', 'No')]
 
     gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
-    age = models.CharField('Age:', choices=AGE_CHOICES, blank=False, max_length=15)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
     academic_year = models.CharField('Academic Year:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     field_of_study = models.CharField('Field of Study:', choices=FIELD_CHOICES, max_length=25)
     university = models.CharField('Which Kind of University Do You Attend?', choices=UNIVERSITY_CHOICES, max_length=30)
-    university_funding = models.CharField('Which Model of University Funding Do You Have?', choices=UNIVERSITY_FUNDING_CHOICES, max_length=25)
+    university_funding = models.CharField('Which Mode of University Funding Do You Have?', choices=UNIVERSITY_FUNDING_CHOICES, max_length=25)
     mode_of_study = models.CharField('What Mode of Study Are You Taking Your Studies?', choices=MODE_OF_STUDY_CHOICES, max_length=25)
     s_media_security_knowledge = models.CharField('Do You Have Any Prior Knowledge or Training In Social Network Security?', choices=NET_SECURITY_KNOWLEDGE_CHOICES, max_length=10)
     social_media_usage = models.CharField('How Frequently Do You Use Social Media Platforms?', choices=SOCIAL_MEDIA_USAGE_CHOICES, max_length=25)
@@ -91,9 +93,28 @@ class DemographicInformation(models.Model):
     s_media_privacy_policy_and_TOS = models.CharField('How Familiar Are You With The Privacy Policies & Terms Of Service Of The Social Media Platforms?', choices=PRIVACY_POLICY_TOS_CHOICES, max_length=30)
     delete_account_due_to_privacy = models.CharField('Have You Ever Changed Or Deleted A Social Media Account Due To Privacy Or Security Concerns?', choices=SOCIAL_MEDIA_DELETION_CHOICES, max_length=10)
     s_media_security_education = models.CharField('Would You Be Willing To Participate In Educational Programs Or WorkShops Focused On Social Network Security?', choices=SOCIAL_MEDIA_SECURITY_EDU_CHOICES, max_length=10)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    # override save to make predictions
+    def save(self, *args, **kwargs):
+        ml_model = joblib.load('static/ml_cybersecurity_pmt.joblib')
+        self.predictions = ml_model.predict(
+            [[self.gender, self.age, self.academic_year, self.field_of_study, self.university, self.university_funding,
+              self.mode_of_study, self.s_media_security_knowledge, self.social_media_usage, self.active_social_platforms,
+              self.average_hours_s_media, self.s_media_security_concern, self.social_media_breaches,
+              self.s_media_security_measure, self.privacy_security_education, self.s_media_self_protection,
+              self.s_media_privacy_settings_awareness, self.often_review_privacy_settings, self.s_media_personal_info_sharing,
+              self.victim_of_cyberbullying, self.s_media_privacy_security_features, self.s_media_sensitive_info_sharing,
+              self.s_media_malicious_encounters, self.more_s_media_user_protection, self.s_media_privacy_policy_and_TOS,
+              self.delete_account_due_to_privacy, self.s_media_security_education]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.gender, self.academic_year
+        return self.gender
 
 
 # SECTION B

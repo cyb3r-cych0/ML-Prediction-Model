@@ -505,66 +505,13 @@ def intended_user_behaviour(request):
 
 # SECTION A.
 def demographic_information(request):
-    form = DemographicInformationForm()
     if request.method == 'POST':
         form = DemographicInformationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Data Submitted Successfully.')
-            warnings.filterwarnings("ignore")
-
-            model = joblib.load('static/ml_cybersecurity_pmt.joblib')
-
-            # Get the input data from the form
-            feature1 = float(request.POST.get('gender'))
-            feature2 = float(request.POST.get('age'))
-            feature3 = float(request.POST.get('academic_year'))
-            feature4 = float(request.POST.get('field_of_study'))
-            feature5 = float(request.POST.get('university'))
-            feature6 = float(request.POST.get('university_funding'))
-            feature7 = float(request.POST.get('mode_of_study'))
-            feature8 = float(request.POST.get('s_media_security_knowledge'))
-            feature9 = float(request.POST.get('social_media_usage'))
-            feature10 = float(request.POST.get('active_social_platforms'))
-            feature11 = float(request.POST.get('average_hours_s_media'))
-            feature12 = float(request.POST.get('s_media_security_concern'))
-            feature13 = float(request.POST.get('social_media_breaches'))
-            feature14 = float(request.POST.get('s_media_security_measure'))
-            feature15 = float(request.POST.get('privacy_security_education'))
-            feature16 = float(request.POST.get('s_media_self_protection'))
-            feature17 = float(request.POST.get('s_media_privacy_settings_awareness'))
-            feature18 = float(request.POST.get('often_review_privacy_settings'))
-            feature19 = float(request.POST.get('s_media_personal_info_sharing'))
-            feature20 = float(request.POST.get('victim_of_cyberbullying'))
-            feature21 = float(request.POST.get('s_media_privacy_security_features'))
-            feature22 = float(request.POST.get('s_media_sensitive_info_sharing'))
-            feature23 = float(request.POST.get('s_media_malicious_encounters'))
-            feature24 = float(request.POST.get('more_s_media_user_protection'))
-            feature25 = float(request.POST.get('s_media_privacy_policy_and_TOS'))
-            feature26 = float(request.POST.get('delete_account_due_to_privacy'))
-            feature27 = float(request.POST.get('s_media_security_education'))
-
-            # Prepare the input data for prediction
-            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
-                           feature8, feature9, feature10, feature11, feature12, feature13, feature14,
-                           feature15, feature16, feature17, feature18, feature19, feature20, feature21,
-                           feature22, feature23, feature24, feature25, feature26,
-                           feature27]]  # Create a list of lists if multiple samples
-
-            # make predictions using linear regression
-            predict = model.predict(input_data)
-
-            # Pass the predictions to the template for rendering
-            context = {
-                'predict': predict
-            }
-            return render(request, 'results.html', context)
-        else:
-            messages.error(request, 'FAILED! Something went wrong.')
-            context = {
-                'form': form
-            }
-            return render(request, 'demographic_information.html', context)
+            return redirect('results')
+    else:
+        form = DemographicInformationForm()
     context = {
         'form': form
     }
@@ -573,7 +520,11 @@ def demographic_information(request):
 
 # view Results
 def results(request):
-    return render(request, 'results.html')
+    predicted_appraisal = DemographicInformation.objects.all().order_by('-id')[:10]
+    context = {
+        'predicted_appraisal': predicted_appraisal
+    }
+    return render(request, 'results.html', context)
 
 
 # Perceived Severity Results

@@ -12,7 +12,13 @@ from .models import SocialNetworkSecurity
 class DemographicInformationForm(ModelForm):
     class Meta:
         model = DemographicInformation
-        fields = "__all__"
+        fields = ['gender', 'age', 'academic_year', 'field_of_study', 'university', 'university_funding', 'mode_of_study',
+                  's_media_security_knowledge', 'social_media_usage', 'active_social_platforms', 'average_hours_s_media',
+                  's_media_security_concern', 'social_media_breaches', 's_media_security_measure', 'privacy_security_education',
+                  's_media_self_protection', 's_media_privacy_settings_awareness', 'often_review_privacy_settings',
+                  's_media_personal_info_sharing', 'victim_of_cyberbullying', 's_media_privacy_security_features',
+                  's_media_sensitive_info_sharing', 's_media_malicious_encounters', 'more_s_media_user_protection',
+                  's_media_privacy_policy_and_TOS', 'delete_account_due_to_privacy', 's_media_security_education']
 
 
 class PerceivedSeverityForm(ModelForm):

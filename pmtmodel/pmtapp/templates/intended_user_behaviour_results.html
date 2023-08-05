@@ -35,8 +35,32 @@
             {% endif %}
         {% endfor %}
 
-        <h4>Training & Testing Model</h4>
-        {{ predict }}
+         <div class="container">
+              <div class="row mt-4">
+                    <div class="col-md-8 offset-md-2">
+                        <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Gender</th>
+                                  <th scope="col">Age</th>
+                                  <th scope="col">Education Level</th>
+                                  <th scope="col">Prediction</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {% for data in predicted_appraisal %}
+                                <tr>
+                                  <th scope="row">{{ data.gender }}</th>
+                                  <td>{{ data.age }}</td>
+                                  <td>{{ data.academic_year }}</td>
+                                  <td>{{ data.predictions }}</td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                        </table>
+                    </div>
+              </div>
+         </div>
 
         <div class="col-6 m-2">
             <a href="{% url 'intended_user_behaviour' %}">
