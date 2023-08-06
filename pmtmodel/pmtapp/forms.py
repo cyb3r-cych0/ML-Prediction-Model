@@ -24,7 +24,9 @@ class DemographicInformationForm(ModelForm):
 class PerceivedSeverityForm(ModelForm):
     class Meta:
         model = PerceivedSeverity
-        fields = "__all__"
+        fields = ['gender', 'age', 'academic_year', 'potential_breach_consequences', 'impact_of_info', 'substantial_harm_by_breaches', 's_media_threats_concern',
+                  'negative_impacts_breaches', 'info_sharing_risks', 'serious_s_media_security',
+                  'substantial_data_breaches', 'high_network_severity', 's_media_negative_consequences']
 
 
 class PerceivedVulnerabilityForm(ModelForm):

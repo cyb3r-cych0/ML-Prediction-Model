@@ -6,8 +6,6 @@ import joblib
 # SECTION A
 class DemographicInformation(models.Model):
     GENDER_CHOICES = [('1', 'Male'), ('0', 'Female')]
-    AGE_CHOICES = [('19', '18-20'), ('23', '21-25'), ('28', '26-30'), ('33', '31-35'),
-                   ('40', '36 & Above')]
     ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
                         ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
     FIELD_CHOICES = [('1', 'Arts/Humanities'), ('2', 'Business/Management'),
@@ -119,6 +117,9 @@ class DemographicInformation(models.Model):
 
 # SECTION B
 class PerceivedSeverity(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     POTENTIAL_BREACH_CONSEQUENCES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     INFO_BREACH_IMPACT_CONSEQUENCES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SUBSTANTIAL_HARM_BY_BREACHES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -130,6 +131,9 @@ class PerceivedSeverity(models.Model):
     HIGH_NETWORK_SEVERITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     S_MEDIA_NEGATIVE_CONSEQUENCES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     potential_breach_consequences = models.CharField('The potential consequences of security breaches on social networks are severe.', choices=POTENTIAL_BREACH_CONSEQUENCES, max_length=20)
     impact_of_info = models.CharField('The impact of unauthorized access to personal information on social networks is significant.', choices=INFO_BREACH_IMPACT_CONSEQUENCES, max_length=20)
     substantial_harm_by_breaches = models.CharField('The potential harm caused by privacy breaches in social network settings is substantial.', choices=SUBSTANTIAL_HARM_BY_BREACHES, max_length=20)
@@ -139,7 +143,21 @@ class PerceivedSeverity(models.Model):
     serious_s_media_security = models.CharField('The severity of threats to social network security is something that should be taken seriously.', choices=SERIOUS_S_MEDIA_SECURITY, max_length=20)
     substantial_data_breaches = models.CharField('The potential harm caused by data breaches on social networks is substantial.', choices=SUBSTANTIAL_DATA_BREACHES, max_length=20)
     high_network_severity = models.CharField('I perceive the severity of threats to social network security as high.', choices=HIGH_NETWORK_SEVERITY, max_length=20)
-    s_media_negative_consequences = models.CharField('The negative consequences of security vulnerabilities in social network settings are significant.', choices=S_MEDIA_NEGATIVE_CONSEQUENCES, max_length=20)
+    s_media_negative_consequences = models.CharField('The negative consequences of security vulnerabilities in social network settings are significant.', choices=S_MEDIA_NEGATIVE_CONSEQUENCES, max_length=20, blank=True)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.potential_breach_consequences, self.impact_of_info, self.substantial_data_breaches,
+                self.s_media_threats_concern, self.negative_impacts_breaches, self.info_sharing_risks,
+                self.serious_s_media_security, self.substantial_data_breaches, self.high_network_severity,
+                self.s_media_negative_consequences]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
         return self.potential_breach_consequences

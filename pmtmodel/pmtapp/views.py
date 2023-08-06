@@ -214,54 +214,6 @@ def di_csv(request):
     return response
 
 
-# SECTION B
-def perceived_severity(request):
-    form = PerceivedSeverityForm()
-    if request.method == 'POST':
-        form = PerceivedSeverityForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Data Submitted Successfully.')
-            # model
-            warnings.filterwarnings("ignore")
-
-            model = joblib.load('static/ml_efficacy_pmt.joblib')
-
-            # Get the input data from the form
-            feature1 = float(request.POST.get('potential_breach_consequences'))
-            feature2 = float(request.POST.get('impact_of_info'))
-            feature3 = float(request.POST.get('substantial_harm_by_breaches'))
-            feature4 = float(request.POST.get('s_media_threats_concern'))
-            feature5 = float(request.POST.get('negative_impacts_breaches'))
-            feature6 = float(request.POST.get('info_sharing_risks'))
-            feature7 = float(request.POST.get('serious_s_media_security'))
-            feature8 = float(request.POST.get('substantial_data_breaches'))
-            feature9 = float(request.POST.get('high_network_severity'))
-            feature10 = float(request.POST.get('s_media_negative_consequences'))
-
-            # Prepare the input data for prediction
-            input_data = [[feature1, feature2, feature3, feature4, feature5, feature6, feature7,
-                           feature8, feature9, feature10]]  # Create a list of lists if multiple samples
-
-            # make predictions using linear regression
-            predict = model.predict(input_data)
-
-            # Pass the predictions to the template for rendering
-            context = {
-                'predict': predict,
-            }
-            return render(request, 'perceived_severity_results.html', context)
-        else:
-            messages.error(request, 'FAILED! Something went wrong.')
-            context = {
-                'form': form
-            }
-            return render(request, 'perceived_severity.html', context)
-    context = {
-        'form': form,
-        # 'value': value
-    }
-    return render(request, 'perceived_severity.html', context)
 
 
 # SECTION C
@@ -518,6 +470,21 @@ def demographic_information(request):
     return render(request, 'demographic_information.html', context)
 
 
+# SECTION B
+def perceived_severity(request):
+    if request.method == 'POST':
+        form = PerceivedSeverityForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('perceived_severity_results')
+    else:
+        form = PerceivedSeverityForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'perceived_severity.html', context)
+
+
 # view Results
 def results(request):
     predicted_appraisal = DemographicInformation.objects.all().order_by('-id')[:10]
@@ -529,7 +496,11 @@ def results(request):
 
 # Perceived Severity Results
 def perceived_severity_results(request):
-    return render(request, 'perceived_severity_results.html')
+    predicted_appraisal = PerceivedSeverity.objects.all().order_by('-id')[:10]
+    context = {
+        'predicted_appraisal': predicted_appraisal
+    }
+    return render(request, 'perceived_severity_results.html', context)
 
 
 # perceived vulnerability results
