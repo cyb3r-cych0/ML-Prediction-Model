@@ -160,11 +160,14 @@ class PerceivedSeverity(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return self.potential_breach_consequences
+        return self.gender
 
 
 # SECTION C
 class PerceivedVulnerability(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     SECURITY_BREACH_LIKELYNESS = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     VULNERABLE_SECURITY_BREACH = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     INFO_SHARING_RISK_CONCERN = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -176,6 +179,9 @@ class PerceivedVulnerability(models.Model):
     ONLINE_INFO_PRIVACY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     REPORT_SUSPICIOUS_ACTIVITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     security_breach_likelyness = models.CharField('I believe that social network users are likely to experience security threats or breaches.', choices=SECURITY_BREACH_LIKELYNESS, max_length=20)
     vulnerable_security_breach = models.CharField('I feel personally vulnerable to security threats or breaches in social networks.', choices=VULNERABLE_SECURITY_BREACH, max_length=20)
     info_sharing_risk_concern = models.CharField('I am concerned about the potential risks associated with sharing personal information on social networks.', choices=INFO_SHARING_RISK_CONCERN, max_length=20)
@@ -186,13 +192,30 @@ class PerceivedVulnerability(models.Model):
     concerned_info_breaches = models.CharField('I am concerned about the potential consequences of security breaches on my personal information and privacy.', choices=CONCERNED_INFO_BREACHES, max_length=20)
     online_info_privacy = models.CharField('I frequently engage in discussions or seek information about online privacy and security.', choices=ONLINE_INFO_PRIVACY, max_length=20)
     report_suspicious_activity = models.CharField('I am likely to report suspicious or potentially harmful activities on social networks.', choices=REPORT_SUSPICIOUS_ACTIVITY, max_length=20)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.security_breach_likelyness, self.vulnerable_security_breach, self.info_sharing_risk_concern,
+              self.protect_info_online, self.online_potential_threats, self.update_privacy_settings,
+              self.likely_2FA_authentication, self.concerned_info_breaches, self.online_info_privacy,
+              self.report_suspicious_activity]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.security_breach_likelyness
+        return self.gender
 
 
 # section D
 class PerceivedResponseEfficacy(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     EFFECTIVE_SECURITY_CHOICES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     PRIVACY_SETTINGS_PROTECTING_INFO = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     STRONG_PASSWORD_SECURITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -204,6 +227,9 @@ class PerceivedResponseEfficacy(models.Model):
     PRIVACY_SECURITY_UPDATES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SHARING_INFO_SECURITY_REDUCTION = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     effective_security_measures = models.CharField('The recommended security measures provided to protect social network accounts are effective.', choices=EFFECTIVE_SECURITY_CHOICES, max_length=20)
     privacy_settings_protecting_info = models.CharField('I believe that implementing privacy settings on social networks can effectively protect my personal information.', choices=PRIVACY_SETTINGS_PROTECTING_INFO, max_length=20)
     strong_password_security = models.CharField('I am confident that using strong and unique passwords for my social network accounts enhances their security.', choices=STRONG_PASSWORD_SECURITY, max_length=20)
@@ -214,13 +240,30 @@ class PerceivedResponseEfficacy(models.Model):
     backing_up_data = models.CharField('I am confident that regularly backing up my social network data safeguards against potential data loss or security breaches.', choices=BACKING_UP_DATA, max_length=20)
     privacy_security_updates = models.CharField('I believe that being aware of and promptly updating my social network privacy policy can enhance my security and protect against unauthorized access.', choices=PRIVACY_SECURITY_UPDATES, max_length=20)
     sharing_info_security_reduction = models.CharField('I believe that being cautious about accepting friend requests and sharing personal information with strangers on social networks can reduce security risks.', choices=SHARING_INFO_SECURITY_REDUCTION, max_length=20)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.effective_security_measures, self.privacy_settings_protecting_info, self.strong_password_security,
+              self.regular_security_updates, self.cautious_link_clicking, self.info_sharing_security,
+              self.minimize_suspicious_individuals, self.backing_up_data, self.privacy_security_updates,
+              self.sharing_info_security_reduction]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.effective_security_measures
+        return self.gender
 
 
 # SECTION E
 class PerceivedSelfEfficacy(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     EFFECTIVE_SECURITY_KNOWLEDGE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SECURITY_THREATS_AVOIDANCE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     PRIVACY_SETTING_USAGE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -232,6 +275,9 @@ class PerceivedSelfEfficacy(models.Model):
     SOFTWARE_UPDATES_SECURITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     ACCOUNTS_STRONG_PASSWORDS = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     effective_security_knowledge = models.CharField('I believe that I possess the necessary knowledge and skills to implement effective security measures on my social network accounts.', choices=EFFECTIVE_SECURITY_KNOWLEDGE, max_length=20)
     security_threats_avoidance = models.CharField('I am confident that I can identify and avoid potential security risks and threats on social networks.', choices=SECURITY_THREATS_AVOIDANCE, max_length=20)
     privacy_setting_usage = models.CharField('I believe that I have the ability to use privacy settings effectively to control the visibility of my personal information on social networks.', choices=PRIVACY_SETTING_USAGE, max_length=20)
@@ -242,13 +288,30 @@ class PerceivedSelfEfficacy(models.Model):
     privacy_issues_identification = models.CharField('I believe I have the necessary skills to identify and address potential privacy and security issues on social networks.', choices=PRIVACY_ISSUE_IDENTIFICATION, max_length=20)
     software_updates_security = models.CharField('I believe I have the resources and knowledge to update my software and applications regularly to enhance security.', choices=SOFTWARE_UPDATES_SECURITY, max_length=20)
     accounts_strong_passwords = models.CharField('I feel capable of using strong and unique passwords for my social network accounts.', choices=ACCOUNTS_STRONG_PASSWORDS, max_length=20)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.effective_security_knowledge, self.security_threats_avoidance, self.privacy_setting_usage,
+              self.suspicious_links_avoidance, self.suspicious_individuals_avoidance, self.antivirus_usage_knowledge,
+              self.managing_social_connections, self.privacy_issues_identification, self.software_updates_security,
+              self.accounts_strong_passwords]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.effective_security_knowledge
+        return self.gender
 
 
 # SECTION F
 class PerceivedPreventionAndResponseCost(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     SECURITY_IMPLEMENTATION_EFFORTS_HIGH = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SECURITY_FINANCIAL_ENHANCING_HIGH = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SECURITY_EFFORTS_PRACTICES_HIGH = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -259,6 +322,9 @@ class PerceivedPreventionAndResponseCost(models.Model):
     SECURITY_UPDATES_TIME_AND_EFFORTS_REASONABLE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     SECURITY_POTENTIAL_RISKS_OUTWEIGHS_IMPLEMENTATION = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     security_implementation_efforts_high = models.CharField('The effort required to implement security measures on social networks is too high.', choices=SECURITY_IMPLEMENTATION_EFFORTS_HIGH, max_length=20)
     security_financial_enhancing_high = models.CharField('The financial cost associated with enhancing security on social networks is excessive.', choices=SECURITY_FINANCIAL_ENHANCING_HIGH, max_length=20)
     security_efforts_practices_high = models.CharField('It requires a lot of effort to keep up with the latest security practices on social networks.', choices=SECURITY_EFFORTS_PRACTICES_HIGH, max_length=20)
@@ -269,13 +335,30 @@ class PerceivedPreventionAndResponseCost(models.Model):
     security_updates_time_and_efforts_reasonable = models.CharField('The time and effort needed to regularly update software and applications for enhanced security is reasonable.', choices=SECURITY_UPDATES_TIME_AND_EFFORTS_REASONABLE, max_length=20)
     security_potential_risks_outweighs_implementations = models.CharField('The potential risks associated with not taking preventive measures on social networks outweigh the effort required to implement them.', choices=SECURITY_POTENTIAL_RISKS_OUTWEIGHS_IMPLEMENTATION, max_length=20)
     security_potential_risks_outweighs_implementation = models.CharField('The potential risks associated with not taking preventive measures on social networks outweigh the effort required to implement them.', choices=SECURITY_POTENTIAL_RISKS_OUTWEIGHS_IMPLEMENTATION, max_length=20)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.security_implementation_efforts_high, self.security_financial_enhancing_high, self.security_efforts_practices_high,
+              self.security_inconvenience_outweighs_benefits, self.security_loss_functionality_undesirable, self.security_incidence_response_overwhelming,
+              self.security_financial_cost_reasonable, self.security_updates_time_and_efforts_reasonable, self.security_potential_risks_outweighs_implementations,
+              self.security_potential_risks_outweighs_implementation]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.security_implementation_efforts_high
+        return self.gender
 
 
 # SECTION G
 class SocialNetworkSecurity(models.Model):
+    ACADEMIC_CHOICES = [('1', 'Freshman/First-year'), ('2', 'Sophomore/Second-year'), ('3', 'Junior/Third-year'),
+                        ('4', 'Senior/Final-year'), ('5', 'Other/Not a Student')]
+    GENDER_CHOICES = [('1', 'Male'), ('0', 'Female'), ('2', 'Prefer Not Say')]
     PRIVACY_PERSONAL_INFO_MAINTENANCE = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     PROACTIVE_PERSONAL_INFO_ACCESS_MANAGEMENT = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     USE_OF_SECURITY_FEATURES = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
@@ -287,6 +370,9 @@ class SocialNetworkSecurity(models.Model):
     EDUCATE_SOCIAL_NETWORK_SECURITY = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
     MIND_PRIVACY_POLICIES_BEFORE_USING = [('1', 'Strongly Agree'), ('2', 'Agree'), ('3', 'Neutral'), ('4', 'Disagree'), ('5', 'Strongly Disagree')]
 
+    gender = models.CharField('Gender:', choices=GENDER_CHOICES, max_length=15, blank=False)
+    age = models.PositiveIntegerField(validators=[MinValueValidator(18), MaxValueValidator(65)], null=True)
+    academic_year = models.CharField('Level of Education:', choices=ACADEMIC_CHOICES, blank=False, max_length=25)
     privacy_personal_info_maintenance = models.CharField('I am committed to maintaining the privacy of my personal information on social media platforms.', choices=PRIVACY_PERSONAL_INFO_MAINTENANCE, max_length=20)
     proactive_personal_info_access_management = models.CharField('I proactively manage my privacy settings on social media to control who can access my information.', choices=PROACTIVE_PERSONAL_INFO_ACCESS_MANAGEMENT, max_length=20)
     use_of_security_features = models.CharField('I am attentive to the security features offered by social media platforms and make use of them.', choices=USE_OF_SECURITY_FEATURES, max_length=20)
@@ -297,6 +383,23 @@ class SocialNetworkSecurity(models.Model):
     block_report_suspicious_accounts = models.CharField('I intend to report or block accounts that engage in inappropriate or harmful behavior on social media networks.',choices=BLOCK_REPORT_SUSPICIOUS_ACCOUNTS, max_length=20)
     educate_social_network_security = models.CharField('I have the intention to engage in discussions and educate others about the importance of social network security.', choices=EDUCATE_SOCIAL_NETWORK_SECURITY, max_length=20)
     mind_privacy_policies_before_using = models.CharField('I am mindful of the privacy policies and terms of service of social media platforms before using them.', choices=MIND_PRIVACY_POLICIES_BEFORE_USING, max_length=20)
+    predictions = models.CharField(max_length=100, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        model = joblib.load('static/ml_efficacy_pmt.joblib')
+        self.predictions = model.predict(
+            [[self.privacy_personal_info_maintenance, self.proactive_personal_info_access_management,
+              self.use_of_security_features,
+              self.personal_info_risk_consciousness, self.secure_account_with_regular_updates,
+              self.learn_social_network_security,
+              self.interacting_with_suspicious_accounts, self.block_report_suspicious_accounts,
+              self.educate_social_network_security,
+              self.mind_privacy_policies_before_using]])
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.privacy_personal_info_maintenance
+        return self.gender

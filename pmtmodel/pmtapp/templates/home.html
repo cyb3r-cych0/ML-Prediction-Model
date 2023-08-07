@@ -5,61 +5,67 @@
 
 {% block content %}
     <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT ML PROTOTYPE
+        <h1>Cybersecurity User Behavior Prediction</h1>
+        <button class="btn btn-warning w-100 mb-2 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Machine Learning Model [PROTOTYPE]
         </button>
         <div class="ml-4 mt-2">
-            <h1>Cybersecurity User Behavior Prediction-Prototype</h1>
-            <h6>This application predicts cybersecurity user behavior based on the PMT theory moderated by:</h6>
-            <ul>
-            <li>User Demographics</li>
-            <li>Perceived Severity</li>
-            <li>Perceived Vulnerability</li>
-            <li>Perceived Response Efficacy</li>
-            <li>Perceived Self Efficacy</li>
-            <li>Perceived Prevention Response Cost</li>
-            <li>Intended User Behaviour</li>
-            </ul>
-
-            <h5>Press the buttons below to select type of moderation to proceed...</h5>
             <br>
-            <h6>&nbsp;&nbsp; PS. Green Buttons Have Received Recent Updates </h6>
-
+            <h6> >> This application predicts cybersecurity user behavior based on the PMT theory moderated by the below moderations:</h6>
+            <br>
+            <p> >> Press The Buttons Below To Select A Moderation And Proceed&nbsp;&nbsp;&nbsp;&nbsp; /*/ Take One Questionnaire At least /*/ </p>
         </div>
-        <div class="col-8">
+
+        <div class="col-xl-12 m-1 p-1 row">
+            <div class="card col-6">
                 <a href="{% url 'demographic_information' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Demographic Information</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp; Demographic Information</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'perceived_severity' %}">
-                    <button type="submit" class="btn btn-outline-success ml-3 mt-3 col-4" style="width: 100%;">Perceived Severity</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Perceived Severity</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'perceived_vulnerability' %}">
-                    <button type="submit" class="btn btn-outline-warning ml-3 mt-3 col-4" style="width: 100%;">Perceived Vunerability</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Perceived Vulnerability</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'perceived_response_efficacy' %}">
-                    <button type="submit" class="btn btn-outline-warning ml-3 mt-3 col-4" style="width: 100%;">Perceived Response Efficacy</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Perceived Response Efficacy</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'perceived_self_efficacy' %}">
-                    <button type="submit" class="btn btn-outline-warning ml-3 mt-3 col-4" style="width: 100%;">Perceived Self Efficacy</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Perceived Self Efficacy</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'perceived_prevention_response_cost' %}">
-                    <button type="submit" class="btn btn-outline-warning ml-3 mt-3 col-4" style="width: 100%;">Perceived Prevention Response Cost</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Perceived Prevention & Response Cost</i>
+                    </button>
                 </a>
-
+            </div>
+            <div class="card col-6">
                 <a href="{% url 'intended_user_behaviour' %}">
-                    <button type="submit" class="btn btn-outline-warning ml-3 mt-3 col-4" style="width: 100%;">Intended User Behaviour</button>
+                    <button class="btn btn-outline-secondary btn-lg">
+                        <i class="fa fa-link">&nbsp;Social Network Security</i>
+                    </button>
                 </a>
-
-                <a href="{% url 'datasets' %}">
-                    <button type="submit" class="btn btn-outline-secondary ml-3 mt-3 col-4" style="width: 100%;">Data Sets</button>
-                </a>
-
+            </div>
         </div>
-        <!-- Footer -->
     </div>
 {% endblock %}

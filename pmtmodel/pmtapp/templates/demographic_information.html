@@ -6,11 +6,12 @@
 
 {% block content %}
     <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
-            <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT MODEL PROTOTYPE
+        <h2>Demographic Information</h2>
+            <button class="btn btn-warning w-100 mb-2 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Machine Learning Model [PROTOTYPE]
             </button>
         <div>
-            <h2>Demographic Information</h2>
+            <p>Select Choices To predict Appraisal</p>
             <form method="POST" class="card p-3 mt-2" autocomplete="off">
                 {% csrf_token %}
                 <div class="row">
@@ -98,14 +99,17 @@
                 </div>
                     <input class="btn btn-info" type="submit" value="Make Prediction">
             </form>
-            <div class="col-8">
+            <div class="col-12">
             <br>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;Press 'Home' to GO to Home Page & &nbsp;&nbsp;'Next' to PROCEED to the next Moderation.</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Press 'Next' to PROCEED to the next Moderation.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Home' to GO to Home Page. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'Predictions' to VIEW Recent Predictions</p>
                 <a href="{% url 'home' %}">
                     <button class="col-4 btn btn-outline-success ml-3 mt-3" style="width: 90px;" >Home</button>
                 </a>
                 <a href="{% url 'perceived_severity' %}">
-                    <button class="col-4 btn btn-outline-secondary ml-3 mt-3" style="width: 90px;" >Next</button>
+                    <button class="col-4 btn btn-outline-primary ml-3 mt-3" style="width: 90px;" >Next</button>
+                </a>
+                <a href="{% url 'results' %}">
+                    <button class="col-4 btn btn-outline-secondary ml-3 mt-3" style="width: 100px;" >Predictions</button>
                 </a>
             </div>
         </div>

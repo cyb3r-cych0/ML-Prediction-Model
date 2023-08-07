@@ -4,9 +4,9 @@
 {% block title %} Predictions {% endblock %}
 
 {% block content %}
-    <div class="container mt-5 mb-5 pb-5" style="width: 100%; font-size: 14px">
+    <div class="container mt-1 mb-5 pb-5" style="width: 100%; font-size: 14px">
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT ML PROTOTYPE - Perceived Severity Prediction
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Perceived Severity Predictions
         </button>
 
         <div class="container">
@@ -60,20 +60,19 @@
                         </table>
                     </div>
               </div>
-            <h6>&nbsp;&nbsp;&nbsp;&nbsp;Thank you for interacting with our Machine Learning Model.</h6>
             <br>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Press 'Back' to REPEAT current Moderation, &nbsp;&nbsp;'Next' to PROCEED to the next Moderation, &nbsp;&nbsp;'Exit' to EXIT to Home Page</p>
          </div>
 
-        <div class="col-9 m-2">
+        <div class="col-12 m-2">
             <a href="{% url 'perceived_severity' %}">
-                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-secondary col-3">Back</button>
+                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-secondary col-2">Back</button>
             </a>
             <a href="{% url 'perceived_vulnerability' %}">
-                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-primary col-3">Next</button>
+                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-primary col-2">Next</button>
             </a>
             <a href="{% url 'home' %}">
-                    <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-danger col-3" >Exit</button>
+                    <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-danger col-2" >Exit</button>
                 </a>
         </div>
     </div>

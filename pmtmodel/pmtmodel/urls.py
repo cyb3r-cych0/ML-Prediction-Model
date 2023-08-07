@@ -23,14 +23,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('datasets/', views.datasets, name='datasets'),
 
-    path('ps_csv/', views.ps_csv, name='ps_csv'),
-    path('pv_csv/', views.pv_csv, name='pv_csv'),
-    path('pre_csv/', views.pre_csv, name='pre_csv'),
-    path('pse_csv/', views.pse_csv, name='pse_csv'),
-    path('pprc_csv/', views.pprc_csv, name='pprc_csv'),
-    path('sns_csv/', views.sns_csv, name='sns_csv'),
-    path('di_csv/', views.di_csv, name='di_csv'),
-
     path('demographic_information/', views.demographic_information, name='demographic_information'),
     path('perceived_severity/', views.perceived_severity, name='perceived_severity'),
     path('perceived_vulnerability/', views.perceived_vulnerability, name='perceived_vulnerability'),
