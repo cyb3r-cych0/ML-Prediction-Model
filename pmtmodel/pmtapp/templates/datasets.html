@@ -4,12 +4,297 @@
 
 {% block title %} All Predictions {% endblock %}
 
+{% block home_page %} {% endblock %}
+{% block perceived_severity %} {% endblock%}
+{% block perceived_vulnerability %} {% endblock%}
+{% block perceived_self_efficacy %} {% endblock%}
+{% block perceived_response_efficacy %} {% endblock%}
+
 {% block content %}
 
-    <div class="container mt-1 mb-5 pb-5" style="width: 100%; font-size: 14px">
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Machine Learning Model [PROTOTYPE]
+    <div class="container mt-3 mb-1 pb-1" style="width: 100%; font-size: 14px">
+        <h2 class="text-center" style="color: orange;
+                                        font-size: 25px;
+                                        font-weight: 500;
+                                        letter-spacing: 4px;
+                                        text-transform: uppercase;
+                                        margin-bottom: 0px;">PMT - Charts, Graphs & Stats </h2>
+        <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT - Prediction Results&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ now }}
         </button>
-        <h6>Grapgical Data Coming Soon</h6>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'chart.umd.js' %}"></script>
+
+        <div class="col-md-12 m-1 p-1">
+            <div class="row">
+                <div class=" col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <!-- Card content for 'Perceived Severity' -->
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Male Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ all_male }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <!-- Card content for 'Perceived Severity' -->
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Female Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ all_female }}</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card my-card shadow p-3 text-center p-2 m-2">
+                        <!-- Card content for 'Perceived Vulnerability' -->
+                        <div class="chart-container">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                        <script>
+                            // Data for the chart
+                            var chartData = {
+                                labels: ['THREAT APPRAISAL', 'COPING APPRAISAL'],
+                                datasets: [{
+                                    data: [{{ all_male }}, {{ all_female }}],
+                                    backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(153, 102, 255, 0.2)'
+                                    ],
+                                    borderColor: ['rgb(255, 99, 132)', 'rgb(153, 102, 255)'
+                                    ],
+                                    borderWidth: 2,
+                                }]
+                            };
+                            // Canvas
+                            var ctx = document.getElementById('genderChart').getContext('2d');
+                            var genderChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: chartData,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
+
+        <button class="btn btn-secondary w-100 mt-5 mb-5 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT - Education Level Graphical Representation
+        </button>
+
+        <div class="col-md-12 m-1 p-1">
+            <div class="row">
+                <div class=" col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Freshmen Users &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_count_freshman }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sophomore Users &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_count_sophomore }} </span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Junior Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_count_junior }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Senior Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_count_senior }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Other/Not Students' Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_count_other }}</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+
+                        <div class="container">
+                            <canvas id="myChart100"></canvas>
+                        </div>
+
+                        <script>
+                            // Data for the chart
+                            var chartData = {
+                                labels: [
+                                    'Freshman',
+                                    'Sophomore',
+                                    'Junior',
+                                    'Senior',
+                                    'Other',
+                                ],
+                                datasets: [{
+                                    label: 'Perceived Severity',
+                                    data: [{{ ps_count_freshman }}, {{ ps_count_sophomore }}, {{ ps_count_junior }}, {{ ps_count_senior }}, {{ ps_count_other }}],
+                                    fill: true,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgb(54, 162, 235)',
+                                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                },  {
+                                    label: 'Perceived Vulnerability',
+                                    data: [{{ pv_count_freshman }}, {{ pv_count_sophomore }}, {{ pv_count_junior }}, {{ pv_count_senior }}, {{ pv_count_other }}],
+                                    fill: true,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgb(255, 99, 132)',
+                                    pointBackgroundColor: 'rgb(255, 99, 132)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgb(255, 99, 132)'
+                                },  {
+                                    label: 'Perceived Response Efficacy',
+                                    data: [{{ pre_count_freshman }}, {{ pre_count_sophomore }}, {{ pre_count_junior }}, {{ pre_count_senior }}, {{ pre_count_other }}],
+                                    fill: true,
+                                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                                    borderColor: 'rgb(255, 205, 86)',
+                                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                },  {
+                                    label: 'Perceived Self Efficacy',
+                                    data: [{{ pse_count_freshman }}, {{ pse_count_sophomore }}, {{ pse_count_junior }}, {{ pse_count_senior }}, {{ pse_count_other }}],
+                                    fill: true,
+                                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                    borderColor: 'rgb(153, 102, 255)',
+                                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                }]
+                            };
+
+                            // Canvas
+                            var ctx = document.getElementById('myChart100').getContext('2d');
+                            var myChart100 = new Chart(ctx, {
+                                type: 'radar',
+                                data: chartData,
+                                options: {
+                                    elements: {
+                                        line: {
+                                            borderWidth: 2
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
+
+        <button class="btn btn-secondary w-100 mb-5 mt-5 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT - Average Age Graphical Representation
+        </button>
+
+        <div class="col-md-12 m-1 p-1">
+            <div class="row">
+                <div class=" col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Perceived Severity &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ ps_avg_age }}</span></p>
+                    </div>
+
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Perceived Vulnerability: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pv_avg_age }} </span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Perceived Self Efficacy: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pse_avg_age }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Perceived Response Efficacy: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pre_avg_age }}</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <div class="container">
+                            <canvas id="ageChart"></canvas>
+                        </div>
+
+                        <script>
+
+                        var ctx = document.getElementById("ageChart").getContext("2d");
+
+                        var data = {
+                            labels: ['Perceived Severity', 'Perceived Vulnerability', 'Perceived Self Efficacy', 'Perceived Response Efficacy'],
+                            datasets: [
+                                {
+                                    label: 'Average Age',
+                                    backgroundColor: ['rgba(255, 99, 132, 0.2)'
+                                    ],
+                                    borderColor: ['rgb(255, 99, 132)'
+                                    ],
+                                    borderWidth: 1,
+                                    data: [{{ ps_avg_age }}, {{ pv_avg_age }}, {{ pse_avg_age }}, {{ pre_avg_age }}],
+                                    fill: false,
+                                    borderColor: 'rgb(75, 192, 192)',
+                                    tension: 0.1
+                                }
+                            ]
+                        };
+
+                        var ageChart = new Chart(ctx, {
+                            type: 'line',
+                            data: data,
+                        });
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
+
+        <button class="btn btn-secondary w-100 mb-5 mt-5 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT - Coping vs Threat Appraisal Prediction
+        </button>
+
+        <div class="col-md-12 m-1 p-1">
+            <div class="row">
+                <div class=" col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Number of PMT Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ total_number }}</span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Average Age of PMT Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ avg_avg_age }} </span></p>
+                    </div>
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Majority Category of PMT Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ final_pred }}</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <div class="chart-container">
+                            <canvas id="myChart17"></canvas>
+                        </div>
+
+                        <script>
+                            // Data for the chart
+                            var chartData = {
+                                labels: ['THREAT APPRAISAL', 'COPING APPRAISAL'],
+                                datasets: [{
+                                    data: [{{ total_threat }}, {{ total_coping }}],
+                                    backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(153, 102, 255, 0.2)'
+                                    ],
+                                    borderColor: ['rgb(255, 99, 132)', 'rgb(153, 102, 255)'
+                                    ],
+                                    borderWidth: 2,
+                                }]
+                            };
+                            // Canvas
+                            var ctx = document.getElementById('myChart17').getContext('2d');
+                            var myChart17 = new Chart(ctx, {
+                                type: 'pie',
+                                data: chartData,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

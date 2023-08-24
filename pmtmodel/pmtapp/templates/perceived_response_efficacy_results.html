@@ -3,16 +3,28 @@
 
 {% block title %} Predictions {% endblock %}
 
+{% block home_page %} {% endblock %}
+{% block perceived_severity %} {% endblock%}
+{% block perceived_vulnerability %} {% endblock%}
+{% block perceived_self_efficacy %} {% endblock%}
+{% block perceived_response_efficacy %} {% endblock%}
+
 {% block content %}
     <div class="container mt-1 mb-5 pb-5" style="width: 100%; font-size: 14px">
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Perceived Response Efficacy Predictions
+        <h2 class="text-center" style="color: orange;
+                                        font-size: 25px;
+                                        font-weight: 500;
+                                        letter-spacing: 4px;
+                                        text-transform: uppercase;
+                                        margin-bottom: 0px;">PMT - Tabular Visualization</h2>
+        <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp; PMT - Perceived Response Efficacy Prediction &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ now }}
         </button>
 
         <div class="container">
               <div class="row mt-4">
                     <div class="col-md-8 offset-md-2">
-                        <table class="table">
+                        <table class="table table-warning table-hover">
                               <thead>
                                 <tr>
                                   <th scope="col">#</th>
@@ -60,20 +72,83 @@
                         </table>
                     </div>
               </div>
-            <br>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;Press 'Back' to REPEAT current Moderation, &nbsp;&nbsp;'Next' to PROCEED to the next Moderation, &nbsp;&nbsp;'Exit' to EXIT to Home Page</p>
+
         </div>
 
-        <div class="col-12 m-2">
-            <a href="{% url 'perceived_response_efficacy' %}">
-                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-secondary col-2">Back</button>
-            </a>
-            <a href="{% url 'perceived_self_efficacy' %}">
-                <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-primary col-2">Next</button>
-            </a>
-            <a href="{% url 'home' %}">
-                    <button type="button" class="w-50 ml-5 btn btn-sm btn-outline-danger col-2" >Exit</button>
-                </a>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'chart.umd.js' %}"></script>
+
+        <h2 class="text-center mt-5" style="color: orange;
+                                        font-size: 25px;
+                                        font-weight: 500;
+                                        letter-spacing: 4px;
+                                        text-transform: uppercase;
+                                        margin-bottom: 0px;">PMT - Graphical Visualization</h2>
+
+       <button class="btn btn-secondary w-100 mt-5 mb-2 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT - Coping Appraisal - Threat Appraisal Ratio
+       </button>
+
+        <div class="col-md-12 m-1 p-1">
+            <div class="row">
+                <div class=" col-md-6">
+                    <div class="card my-card shadow p-3 text-secondary p-2 m-2">
+                        <!-- Card content for 'Perceived Severity' -->
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PMT Users: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pre_number }}</span></p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Average Age: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pre_avg_age }}</span></p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Majority Category: &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-success">{{ pre_pred_value }}</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card my-card shadow p-3 text-center p-2 m-2">
+                        <!-- Card content for 'Perceived Vulnerability' -->
+                        <div class="chart-container">
+                            <canvas id="preChart"></canvas>
+                        </div>
+
+                        <script>
+                            // Data for the chart
+                            var chartData = {
+                                labels: ['THREAT APPRAISAL', 'COPING APPRAISAL'],
+                                datasets: [{
+                                    data: [{{ pre_count_threat }}, {{ pre_count_coping }}],
+                                    backgroundColor: ['#0000FF', '#00FF00']
+                                }]
+                            };
+                            // Canvas
+                            var ctx = document.getElementById('preChart').getContext('2d');
+                            var preChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: chartData,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-4 m-2 p-2">
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'perceived_response_efficacy' %}">
+                        <button type="button" class="w-100 btn btn-sm btn-outline-secondary">Back - Repeat Moderation</button>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                     <a href="{% url 'perceived_self_efficacy' %}">
+                        <button type="button" class="w-100 btn btn-sm btn-outline-success">Proceed - Next Moderation &nbsp; 4/4</button>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <a href="{% url 'home' %}">
+                        <button type="button" class="w-100 btn btn-sm btn-outline-danger">Exit - To Home Page</button>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

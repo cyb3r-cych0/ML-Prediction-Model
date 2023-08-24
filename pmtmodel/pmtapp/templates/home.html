@@ -4,68 +4,139 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-    <div class="container mt-1 mb-1 pb-1" style="width: 100%; font-size: 14px">
-        <h1>Cybersecurity User Behavior Prediction</h1>
-        <button class="btn btn-warning w-100 mb-2 no-pointer">
-                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Machine Learning Model [PROTOTYPE]
+
+<!--    <div class="container col-10 mt-2 mb-1 pb-1" style="width: 100%; font-size: 14px">-->
+<!--        <br>-->
+<!--        <div class="texting m-4">-->
+<!--            <button class="btn btn-secondary w-100 mt-4 mb-4 no-pointer">-->
+<!--                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR - Select Moderation By Clicking The Links Below To Proceed-->
+<!--            </button>-->
+<!--            <p>This application predicts cybersecurity user behavior between 'COPING APPRAISAL' & 'THREAT APPRAISAL'-->
+<!--                based on the following moderation's under Protection Motivation Theory (PMT):</p>-->
+<!--            <br>-->
+<!--        </div>-->
+
+<!--        <div class="col-md-12 m-1 p-1">-->
+<!--            <div class="row">-->
+<!--                <div class=" col-md-6">-->
+<!--                    <div class="card p-2 m-2">-->
+<!--                        &lt;!&ndash; Card content for 'Perceived Severity' &ndash;&gt;-->
+<!--                        <a href="{% url 'perceived_severity' %}">-->
+<!--                            <button class="btn btn-outline-success m-2 btn-lg">-->
+<!--                                <i class="fa fa-link p-1 ml-1" style="color: success;">&nbsp;Perceived Severity</i>-->
+<!--                            </button>-->
+<!--                        </a>-->
+<!--                        <div class="texting p-2 m-1" style="text-decoration: none;">-->
+<!--                            <p>Perceived severity, within the Protection Motivation Theory (PMT),<span> In simpler terms, it's about how much someone perceives-->
+<!--                        the potential negative impact of a situation or threat.</span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="card p-2 m-2">-->
+<!--                        &lt;!&ndash; Card content for 'Perceived Vulnerability' &ndash;&gt;-->
+<!--                        <a href="{% url 'perceived_vulnerability' %}">-->
+<!--                            <button class="btn btn-outline-success m-2 btn-lg">-->
+<!--                                <i class="fa fa-link p-1 ml-1" style="color: success;">&nbsp;Perceived Vulnerability</i>-->
+<!--                            </button>-->
+<!--                        </a>-->
+<!--                        <div class="texting p-2 m-1">-->
+<!--                            <p>Perceived vulnerability, in the context of the Protection Motivation Theory (PMT), <span> In simpler terms, it's about how much someone thinks they could be personally affected by-->
+<!--                        something bad happening.</span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="card p-2 m-2">-->
+<!--                        &lt;!&ndash; Card content for 'Perceived Response Efficacy' &ndash;&gt;-->
+<!--                        <a href="{% url 'perceived_response_efficacy' %}">-->
+<!--                            <button class="btn btn-outline-success m-2 btn-lg">-->
+<!--                                <i class="fa fa-link p-1 ml-1" style="color: success;">&nbsp;Perceived Response Efficacy</i>-->
+<!--                            </button>-->
+<!--                        </a>-->
+<!--                        <div class="texting p-2 m-1">-->
+<!--                            <p>Perceived response efficacy, within the Protection Motivation Theory (PMT), <span>In simpler words, it's about how much someone thinks the suggested solution will actually-->
+<!--                        work to keep them safe or prevent the negative outcome.</span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="card p-2 m-2">-->
+<!--                        &lt;!&ndash; Card content for 'Perceived Self Efficacy' &ndash;&gt;-->
+<!--                        <a href="{% url 'perceived_self_efficacy' %}">-->
+<!--                            <button class="btn btn-outline-success m-2 btn-lg">-->
+<!--                                <i class="fa fa-link p-1 ml-1" style="color: success;">&nbsp;Perceived Self Efficacy</i>-->
+<!--                            </button>-->
+<!--                        </a>-->
+<!--                        <div class="texting p-2 m-1">-->
+<!--                            <p>Perceived self-efficacy, in the context of the Protection Motivation Theory (PMT), <span> Essentially, it's about how confident someone feels in their capacity to carry out the suggested-->
+<!--                        course of action to protect themselves from harm.</span></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    <div class="container col-10 mt-2 mb-1 pb-1" style="width: 100%; font-size: 14px">
+
+        <button class="btn btn-secondary w-100 mt-2 mb-5 no-pointer">
+                <i class="fa-solid fa-circle-info"></i>&nbsp;&nbsp;PMT APPRAISAL PREDICTOR -Summary Graphical Representation
         </button>
-        <div class="ml-4 mt-2">
-            <br>
-            <h6> >> This application predicts cybersecurity user behavior based on the PMT theory moderated by the below moderations:</h6>
-            <br>
-            <p> >> Press The Buttons Below To Select A Moderation And Proceed&nbsp;&nbsp;&nbsp;&nbsp; /*/ Take One Questionnaire At least /*/ </p>
+
+        <div >
+            <canvas id="myChart"></canvas>
         </div>
 
-        <div class="col-xl-12 m-1 p-1 row">
-            <div class="card col-6">
-                <a href="{% url 'demographic_information' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp; Demographic Information</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'perceived_severity' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Perceived Severity</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'perceived_vulnerability' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Perceived Vulnerability</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'perceived_response_efficacy' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Perceived Response Efficacy</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'perceived_self_efficacy' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Perceived Self Efficacy</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'perceived_prevention_response_cost' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Perceived Prevention & Response Cost</i>
-                    </button>
-                </a>
-            </div>
-            <div class="card col-6">
-                <a href="{% url 'intended_user_behaviour' %}">
-                    <button class="btn btn-outline-secondary btn-lg">
-                        <i class="fa fa-link">&nbsp;Social Network Security</i>
-                    </button>
-                </a>
-            </div>
-        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'chart.umd.js' %}"></script>
+
+
+        <script>
+
+        var ctx = document.getElementById("myChart").getContext("2d");
+
+        var data = {
+            labels: ['Perceived Severity', 'Perceived Vulnerability', 'Perceived Self Efficacy', 'Perceived Response Efficacy'],
+            datasets: [
+                {
+                    label: 'Threat Appraisal',
+                    backgroundColor: ['rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: ['rgb(255, 99, 132)'
+                    ],
+                    borderWidth: 1,
+                    data: [{{ ps_count_threat }}, {{ pv_count_threat }}, {{ pse_count_threat }}, {{ pre_count_threat }}]
+                },
+                {
+                    label: 'Coping Appraisal',
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: ['rgb(54, 162, 235)'
+                    ],
+                    borderWidth: 1,
+                    data: [{{ ps_count_coping }}, {{ pv_count_coping }}, {{ pse_count_coping }}, {{ pre_count_coping }}]
+                },
+            ]
+        };
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                barValueSpacing: 15,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                        }
+                    }]
+                }
+            }
+        });
+
+        </script>
+
     </div>
 {% endblock %}
