@@ -1,8 +1,9 @@
 # Protection Motivation Theory Prototype
-## Use Link Below To Run ML-Model
-> https://cyb3rcych0.pythonanywhere.com/
-### This is a Machine Learning Model that uses PMT to predict user behaviour based on:
+### This is a Cyber Security Machine Learning Model that uses PMT to predict user behaviour based on:
 > Perceived Severity,
 > Perceived Vulnerability,
 > Perceived Response Efficacy,
 > Perceived Self Efficacy,
+
+# PMT
+> This prototype uses PMT to predict and categorize user Appraisal (Threat Appraisal / Coping Appraisal) showing graphical representations in its report.
